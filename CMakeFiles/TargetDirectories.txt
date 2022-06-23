@@ -1,0 +1,10 @@
+/home/tobias/deal.ii-candi/deal.II-v9.2.0/examples/MA/KirasFM--minimal-example/CMakeFiles/rebuild_cache.dir
+/home/tobias/deal.ii-candi/deal.II-v9.2.0/examples/MA/KirasFM--minimal-example/CMakeFiles/info.dir
+/home/tobias/deal.ii-candi/deal.II-v9.2.0/examples/MA/KirasFM--minimal-example/CMakeFiles/distclean.dir
+/home/tobias/deal.ii-candi/deal.II-v9.2.0/examples/MA/KirasFM--minimal-example/CMakeFiles/runclean.dir
+/home/tobias/deal.ii-candi/deal.II-v9.2.0/examples/MA/KirasFM--minimal-example/CMakeFiles/release.dir
+/home/tobias/deal.ii-candi/deal.II-v9.2.0/examples/MA/KirasFM--minimal-example/CMakeFiles/debug.dir
+/home/tobias/deal.ii-candi/deal.II-v9.2.0/examples/MA/KirasFM--minimal-example/CMakeFiles/run.dir
+/home/tobias/deal.ii-candi/deal.II-v9.2.0/examples/MA/KirasFM--minimal-example/CMakeFiles/edit_cache.dir
+/home/tobias/deal.ii-candi/deal.II-v9.2.0/examples/MA/KirasFM--minimal-example/CMakeFiles/strip_comments.dir
+/home/tobias/deal.ii-candi/deal.II-v9.2.0/examples/MA/KirasFM--minimal-example/CMakeFiles/KirasFM--minimal-example.dir
