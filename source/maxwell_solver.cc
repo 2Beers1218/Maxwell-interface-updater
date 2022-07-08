@@ -782,6 +782,7 @@ void MaxwellProblem<dim>::assemble_interface_rhs() {
         const unsigned int block_index_i = fe.system_to_block_index(i).first;
 
         for (unsigned int q_point = 0; q_point < n_face_q_points; q_point++) {
+          // TODO: an dieser Stelle g_in.value erstezen durch das Ergebniss vom Neuronalen Netz.
           update_value[q_point] = g_in.value(face_id - 2, domain_id)[face_n[face_id - 2]][q_point];
 
           Tensor<1, dim> phi_tangential_i = 
@@ -908,6 +909,7 @@ void MaxwellProblem<dim>::output_results() const {
 
   pcout << " done!" << std::endl;
 }
+
 
 // === public functions === 
 template <int dim>

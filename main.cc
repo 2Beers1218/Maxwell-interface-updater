@@ -119,11 +119,12 @@ namespace KirasFM {
     for( unsigned int i = 0; i < size; i++ ) 
       thm[i].solve();
 
-
-    for( unsigned int i = 0; i < size; i++ ) {
-        std::string file_name = "solution_" + std::to_string(i) + "_" + std::to_string(steps) + ".csv";
-        thm[i].solution_to_file(file_name);
-    }
+    if ( steps % 4 == 0 ) {
+      unsigned int tmp_step = step / 4;
+      for( unsigned int i = 0; i < size; i++ ) {
+          std::string file_name = "solution_" + std::to_string(i) + "_" + std::to_string(steps) + ".csv";
+          thm[i].solution_to_file(file_name);
+      }
 
   }
 
