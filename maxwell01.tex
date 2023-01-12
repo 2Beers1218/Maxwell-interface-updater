@@ -1,0 +1,2421 @@
+\documentclass[11pt]{article}
+
+    \usepackage[breakable]{tcolorbox}
+    \usepackage{parskip} % Stop auto-indenting (to mimic markdown behaviour)
+    
+    \usepackage{iftex}
+    \ifPDFTeX
+    	\usepackage[T1]{fontenc}
+    	\usepackage{mathpazo}
+    \else
+    	\usepackage{fontspec}
+    \fi
+
+    % Basic figure setup, for now with no caption control since it's done
+    % automatically by Pandoc (which extracts ![](path) syntax from Markdown).
+    \usepackage{graphicx}
+    % Maintain compatibility with old templates. Remove in nbconvert 6.0
+    \let\Oldincludegraphics\includegraphics
+    % Ensure that by default, figures have no caption (until we provide a
+    % proper Figure object with a Caption API and a way to capture that
+    % in the conversion process - todo).
+    \usepackage{caption}
+    \DeclareCaptionFormat{nocaption}{}
+    \captionsetup{format=nocaption,aboveskip=0pt,belowskip=0pt}
+
+    \usepackage[Export]{adjustbox} % Used to constrain images to a maximum size
+    \adjustboxset{max size={0.9\linewidth}{0.9\paperheight}}
+    \usepackage{float}
+    \floatplacement{figure}{H} % forces figures to be placed at the correct location
+    \usepackage{xcolor} % Allow colors to be defined
+    \usepackage{enumerate} % Needed for markdown enumerations to work
+    \usepackage{geometry} % Used to adjust the document margins
+    \usepackage{amsmath} % Equations
+    \usepackage{amssymb} % Equations
+    \usepackage{textcomp} % defines textquotesingle
+    % Hack from http://tex.stackexchange.com/a/47451/13684:
+    \AtBeginDocument{%
+        \def\PYZsq{\textquotesingle}% Upright quotes in Pygmentized code
+    }
+    \usepackage{upquote} % Upright quotes for verbatim code
+    \usepackage{eurosym} % defines \euro
+    \usepackage[mathletters]{ucs} % Extended unicode (utf-8) support
+    \usepackage{fancyvrb} % verbatim replacement that allows latex
+    \usepackage{grffile} % extends the file name processing of package graphics 
+                         % to support a larger range
+    \makeatletter % fix for grffile with XeLaTeX
+    \def\Gread@@xetex#1{%
+      \IfFileExists{"\Gin@base".bb}%
+      {\Gread@eps{\Gin@base.bb}}%
+      {\Gread@@xetex@aux#1}%
+    }
+    \makeatother
+
+    % The hyperref package gives us a pdf with properly built
+    % internal navigation ('pdf bookmarks' for the table of contents,
+    % internal cross-reference links, web links for URLs, etc.)
+    \usepackage{hyperref}
+    % The default LaTeX title has an obnoxious amount of whitespace. By default,
+    % titling removes some of it. It also provides customization options.
+    \usepackage{titling}
+    \usepackage{longtable} % longtable support required by pandoc >1.10
+    \usepackage{booktabs}  % table support for pandoc > 1.12.2
+    \usepackage[inline]{enumitem} % IRkernel/repr support (it uses the enumerate* environment)
+    \usepackage[normalem]{ulem} % ulem is needed to support strikethroughs (\sout)
+                                % normalem makes italics be italics, not underlines
+    \usepackage{mathrsfs}
+    
+
+    
+    % Colors for the hyperref package
+    \definecolor{urlcolor}{rgb}{0,.145,.698}
+    \definecolor{linkcolor}{rgb}{.71,0.21,0.01}
+    \definecolor{citecolor}{rgb}{.12,.54,.11}
+
+    % ANSI colors
+    \definecolor{ansi-black}{HTML}{3E424D}
+    \definecolor{ansi-black-intense}{HTML}{282C36}
+    \definecolor{ansi-red}{HTML}{E75C58}
+    \definecolor{ansi-red-intense}{HTML}{B22B31}
+    \definecolor{ansi-green}{HTML}{00A250}
+    \definecolor{ansi-green-intense}{HTML}{007427}
+    \definecolor{ansi-yellow}{HTML}{DDB62B}
+    \definecolor{ansi-yellow-intense}{HTML}{B27D12}
+    \definecolor{ansi-blue}{HTML}{208FFB}
+    \definecolor{ansi-blue-intense}{HTML}{0065CA}
+    \definecolor{ansi-magenta}{HTML}{D160C4}
+    \definecolor{ansi-magenta-intense}{HTML}{A03196}
+    \definecolor{ansi-cyan}{HTML}{60C6C8}
+    \definecolor{ansi-cyan-intense}{HTML}{258F8F}
+    \definecolor{ansi-white}{HTML}{C5C1B4}
+    \definecolor{ansi-white-intense}{HTML}{A1A6B2}
+    \definecolor{ansi-default-inverse-fg}{HTML}{FFFFFF}
+    \definecolor{ansi-default-inverse-bg}{HTML}{000000}
+
+    % commands and environments needed by pandoc snippets
+    % extracted from the output of `pandoc -s`
+    \providecommand{\tightlist}{%
+      \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+    \DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+    % Add ',fontsize=\small' for more characters per line
+    \newenvironment{Shaded}{}{}
+    \newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{{#1}}}
+    \newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{{#1}}}}
+    \newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{{#1}}}
+    \newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{{#1}}}
+    \newcommand{\RegionMarkerTok}[1]{{#1}}
+    \newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\NormalTok}[1]{{#1}}
+    
+    % Additional commands for more recent versions of Pandoc
+    \newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{{#1}}}
+    \newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{{#1}}}
+    \newcommand{\ImportTok}[1]{{#1}}
+    \newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{{#1}}}}
+    \newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{{#1}}}
+    \newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{{#1}}}
+    \newcommand{\BuiltInTok}[1]{{#1}}
+    \newcommand{\ExtensionTok}[1]{{#1}}
+    \newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{{#1}}}
+    \newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{{#1}}}
+    \newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    
+    
+    % Define a nice break command that doesn't care if a line doesn't already
+    % exist.
+    \def\br{\hspace*{\fill} \\* }
+    % Math Jax compatibility definitions
+    \def\gt{>}
+    \def\lt{<}
+    \let\Oldtex\TeX
+    \let\Oldlatex\LaTeX
+    \renewcommand{\TeX}{\textrm{\Oldtex}}
+    \renewcommand{\LaTeX}{\textrm{\Oldlatex}}
+    % Document parameters
+    % Document title
+    \title{maxwell01}
+    
+    
+    
+    
+    
+% Pygments definitions
+\makeatletter
+\def\PY@reset{\let\PY@it=\relax \let\PY@bf=\relax%
+    \let\PY@ul=\relax \let\PY@tc=\relax%
+    \let\PY@bc=\relax \let\PY@ff=\relax}
+\def\PY@tok#1{\csname PY@tok@#1\endcsname}
+\def\PY@toks#1+{\ifx\relax#1\empty\else%
+    \PY@tok{#1}\expandafter\PY@toks\fi}
+\def\PY@do#1{\PY@bc{\PY@tc{\PY@ul{%
+    \PY@it{\PY@bf{\PY@ff{#1}}}}}}}
+\def\PY#1#2{\PY@reset\PY@toks#1+\relax+\PY@do{#2}}
+
+\expandafter\def\csname PY@tok@w\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
+\expandafter\def\csname PY@tok@c\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@cp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.74,0.48,0.00}{##1}}}
+\expandafter\def\csname PY@tok@k\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kt\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.69,0.00,0.25}{##1}}}
+\expandafter\def\csname PY@tok@o\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@ow\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\expandafter\def\csname PY@tok@nb\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@nf\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@nc\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@nn\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@ne\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.82,0.25,0.23}{##1}}}
+\expandafter\def\csname PY@tok@nv\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@no\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.53,0.00,0.00}{##1}}}
+\expandafter\def\csname PY@tok@nl\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.63,0.63,0.00}{##1}}}
+\expandafter\def\csname PY@tok@ni\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.60,0.60,0.60}{##1}}}
+\expandafter\def\csname PY@tok@na\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.49,0.56,0.16}{##1}}}
+\expandafter\def\csname PY@tok@nt\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@nd\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\expandafter\def\csname PY@tok@s\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sd\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@si\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.53}{##1}}}
+\expandafter\def\csname PY@tok@se\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sr\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.53}{##1}}}
+\expandafter\def\csname PY@tok@ss\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@sx\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@m\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@gh\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\expandafter\def\csname PY@tok@gu\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}}
+\expandafter\def\csname PY@tok@gd\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}}
+\expandafter\def\csname PY@tok@gi\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.63,0.00}{##1}}}
+\expandafter\def\csname PY@tok@gr\endcsname{\def\PY@tc##1{\textcolor[rgb]{1.00,0.00,0.00}{##1}}}
+\expandafter\def\csname PY@tok@ge\endcsname{\let\PY@it=\textit}
+\expandafter\def\csname PY@tok@gs\endcsname{\let\PY@bf=\textbf}
+\expandafter\def\csname PY@tok@gp\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\expandafter\def\csname PY@tok@go\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.53,0.53,0.53}{##1}}}
+\expandafter\def\csname PY@tok@gt\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.27,0.87}{##1}}}
+\expandafter\def\csname PY@tok@err\endcsname{\def\PY@bc##1{\setlength{\fboxsep}{0pt}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}
+\expandafter\def\csname PY@tok@kc\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kd\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kn\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kr\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@bp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@fm\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@vc\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@vg\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@vi\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@vm\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@sa\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sb\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sc\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@dl\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@s2\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sh\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@s1\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@mb\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@mf\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@mh\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@mi\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@il\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@mo\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@ch\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@cm\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@cpf\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@c1\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@cs\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+
+\def\PYZbs{\char`\\}
+\def\PYZus{\char`\_}
+\def\PYZob{\char`\{}
+\def\PYZcb{\char`\}}
+\def\PYZca{\char`\^}
+\def\PYZam{\char`\&}
+\def\PYZlt{\char`\<}
+\def\PYZgt{\char`\>}
+\def\PYZsh{\char`\#}
+\def\PYZpc{\char`\%}
+\def\PYZdl{\char`\$}
+\def\PYZhy{\char`\-}
+\def\PYZsq{\char`\'}
+\def\PYZdq{\char`\"}
+\def\PYZti{\char`\~}
+% for compatibility with earlier versions
+\def\PYZat{@}
+\def\PYZlb{[}
+\def\PYZrb{]}
+\makeatother
+
+
+    % For linebreaks inside Verbatim environment from package fancyvrb. 
+    \makeatletter
+        \newbox\Wrappedcontinuationbox 
+        \newbox\Wrappedvisiblespacebox 
+        \newcommand*\Wrappedvisiblespace {\textcolor{red}{\textvisiblespace}} 
+        \newcommand*\Wrappedcontinuationsymbol {\textcolor{red}{\llap{\tiny$\m@th\hookrightarrow$}}} 
+        \newcommand*\Wrappedcontinuationindent {3ex } 
+        \newcommand*\Wrappedafterbreak {\kern\Wrappedcontinuationindent\copy\Wrappedcontinuationbox} 
+        % Take advantage of the already applied Pygments mark-up to insert 
+        % potential linebreaks for TeX processing. 
+        %        {, <, #, %, $, ' and ": go to next line. 
+        %        _, }, ^, &, >, - and ~: stay at end of broken line. 
+        % Use of \textquotesingle for straight quote. 
+        \newcommand*\Wrappedbreaksatspecials {% 
+            \def\PYGZus{\discretionary{\char`\_}{\Wrappedafterbreak}{\char`\_}}% 
+            \def\PYGZob{\discretionary{}{\Wrappedafterbreak\char`\{}{\char`\{}}% 
+            \def\PYGZcb{\discretionary{\char`\}}{\Wrappedafterbreak}{\char`\}}}% 
+            \def\PYGZca{\discretionary{\char`\^}{\Wrappedafterbreak}{\char`\^}}% 
+            \def\PYGZam{\discretionary{\char`\&}{\Wrappedafterbreak}{\char`\&}}% 
+            \def\PYGZlt{\discretionary{}{\Wrappedafterbreak\char`\<}{\char`\<}}% 
+            \def\PYGZgt{\discretionary{\char`\>}{\Wrappedafterbreak}{\char`\>}}% 
+            \def\PYGZsh{\discretionary{}{\Wrappedafterbreak\char`\#}{\char`\#}}% 
+            \def\PYGZpc{\discretionary{}{\Wrappedafterbreak\char`\%}{\char`\%}}% 
+            \def\PYGZdl{\discretionary{}{\Wrappedafterbreak\char`\$}{\char`\$}}% 
+            \def\PYGZhy{\discretionary{\char`\-}{\Wrappedafterbreak}{\char`\-}}% 
+            \def\PYGZsq{\discretionary{}{\Wrappedafterbreak\textquotesingle}{\textquotesingle}}% 
+            \def\PYGZdq{\discretionary{}{\Wrappedafterbreak\char`\"}{\char`\"}}% 
+            \def\PYGZti{\discretionary{\char`\~}{\Wrappedafterbreak}{\char`\~}}% 
+        } 
+        % Some characters . , ; ? ! / are not pygmentized. 
+        % This macro makes them "active" and they will insert potential linebreaks 
+        \newcommand*\Wrappedbreaksatpunct {% 
+            \lccode`\~`\.\lowercase{\def~}{\discretionary{\hbox{\char`\.}}{\Wrappedafterbreak}{\hbox{\char`\.}}}% 
+            \lccode`\~`\,\lowercase{\def~}{\discretionary{\hbox{\char`\,}}{\Wrappedafterbreak}{\hbox{\char`\,}}}% 
+            \lccode`\~`\;\lowercase{\def~}{\discretionary{\hbox{\char`\;}}{\Wrappedafterbreak}{\hbox{\char`\;}}}% 
+            \lccode`\~`\:\lowercase{\def~}{\discretionary{\hbox{\char`\:}}{\Wrappedafterbreak}{\hbox{\char`\:}}}% 
+            \lccode`\~`\?\lowercase{\def~}{\discretionary{\hbox{\char`\?}}{\Wrappedafterbreak}{\hbox{\char`\?}}}% 
+            \lccode`\~`\!\lowercase{\def~}{\discretionary{\hbox{\char`\!}}{\Wrappedafterbreak}{\hbox{\char`\!}}}% 
+            \lccode`\~`\/\lowercase{\def~}{\discretionary{\hbox{\char`\/}}{\Wrappedafterbreak}{\hbox{\char`\/}}}% 
+            \catcode`\.\active
+            \catcode`\,\active 
+            \catcode`\;\active
+            \catcode`\:\active
+            \catcode`\?\active
+            \catcode`\!\active
+            \catcode`\/\active 
+            \lccode`\~`\~ 	
+        }
+    \makeatother
+
+    \let\OriginalVerbatim=\Verbatim
+    \makeatletter
+    \renewcommand{\Verbatim}[1][1]{%
+        %\parskip\z@skip
+        \sbox\Wrappedcontinuationbox {\Wrappedcontinuationsymbol}%
+        \sbox\Wrappedvisiblespacebox {\FV@SetupFont\Wrappedvisiblespace}%
+        \def\FancyVerbFormatLine ##1{\hsize\linewidth
+            \vtop{\raggedright\hyphenpenalty\z@\exhyphenpenalty\z@
+                \doublehyphendemerits\z@\finalhyphendemerits\z@
+                \strut ##1\strut}%
+        }%
+        % If the linebreak is at a space, the latter will be displayed as visible
+        % space at end of first line, and a continuation symbol starts next line.
+        % Stretch/shrink are however usually zero for typewriter font.
+        \def\FV@Space {%
+            \nobreak\hskip\z@ plus\fontdimen3\font minus\fontdimen4\font
+            \discretionary{\copy\Wrappedvisiblespacebox}{\Wrappedafterbreak}
+            {\kern\fontdimen2\font}%
+        }%
+        
+        % Allow breaks at special characters using \PYG... macros.
+        \Wrappedbreaksatspecials
+        % Breaks at punctuation characters . , ; ? ! and / need catcode=\active 	
+        \OriginalVerbatim[#1,codes*=\Wrappedbreaksatpunct]%
+    }
+    \makeatother
+
+    % Exact colors from NB
+    \definecolor{incolor}{HTML}{303F9F}
+    \definecolor{outcolor}{HTML}{D84315}
+    \definecolor{cellborder}{HTML}{CFCFCF}
+    \definecolor{cellbackground}{HTML}{F7F7F7}
+    
+    % prompt
+    \makeatletter
+    \newcommand{\boxspacing}{\kern\kvtcb@left@rule\kern\kvtcb@boxsep}
+    \makeatother
+    \newcommand{\prompt}[4]{
+        \ttfamily\llap{{\color{#2}[#3]:\hspace{3pt}#4}}\vspace{-\baselineskip}
+    }
+    
+
+    
+    % Prevent overflowing lines due to hard-to-break entities
+    \sloppy 
+    % Setup hyperref package
+    \hypersetup{
+      breaklinks=true,  % so long urls are correctly broken across lines
+      colorlinks=true,
+      urlcolor=urlcolor,
+      linkcolor=linkcolor,
+      citecolor=citecolor,
+      }
+    % Slightly bigger margins than the latex defaults
+    
+    \geometry{verbose,tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in}
+    
+    
+
+\begin{document}
+    
+    \maketitle
+    
+    
+
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{1}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{interface\PYZus{}training} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+\PY{n}{solution\PYZus{}training} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+\PY{n}{target\PYZus{}training} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{2}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{import} \PY{n+nn}{torch}
+\PY{k+kn}{import} \PY{n+nn}{csv}
+
+\PY{k}{def} \PY{n+nf}{csv\PYZus{}to\PYZus{}list}\PY{p}{(}\PY{n}{csv\PYZus{}reader\PYZus{}object}\PY{p}{,} \PY{n}{list\PYZus{}object}\PY{p}{)}\PY{p}{:}
+    \PY{k}{for} \PY{n}{row} \PY{o+ow}{in} \PY{n}{csv\PYZus{}reader\PYZus{}object}\PY{p}{:}
+        \PY{n}{full\PYZus{}row} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+        \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{4}\PY{p}{)}\PY{p}{:}
+            \PY{n}{col} \PY{o}{=} \PY{n}{row}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{o}{.}\PY{n}{replace}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{(}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+            \PY{n}{col} \PY{o}{=} \PY{n}{col}\PY{o}{.}\PY{n}{replace}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{)}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+            \PY{n}{col} \PY{o}{=} \PY{n}{col}\PY{o}{.}\PY{n}{replace}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{,}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{ }\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+            \PY{n}{col} \PY{o}{=} \PY{n}{col}\PY{o}{.}\PY{n}{split}\PY{p}{(}\PY{p}{)}
+            \PY{n}{full\PYZus{}row} \PY{o}{+}\PY{o}{=} \PY{p}{[}\PY{n+nb}{float}\PY{p}{(}\PY{n}{col}\PY{p}{[}\PY{n}{j}\PY{p}{]}\PY{p}{)} \PY{k}{for} \PY{n}{j} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{2}\PY{p}{)}\PY{p}{]}
+        \PY{n}{list\PYZus{}object} \PY{o}{+}\PY{o}{=} \PY{p}{[}\PY{n}{full\PYZus{}row}\PY{p}{]}
+        
+\PY{k}{if} \PY{n}{torch}\PY{o}{.}\PY{n}{is\PYZus{}tensor}\PY{p}{(}\PY{n}{interface\PYZus{}training}\PY{p}{)}\PY{p}{:}
+    \PY{n}{interface\PYZus{}training} \PY{o}{=} \PY{n}{interface\PYZus{}training}\PY{o}{.}\PY{n}{tolist}\PY{p}{(}\PY{p}{)}
+    
+\PY{k}{if} \PY{n}{torch}\PY{o}{.}\PY{n}{is\PYZus{}tensor}\PY{p}{(}\PY{n}{solution\PYZus{}training}\PY{p}{)}\PY{p}{:}
+    \PY{n}{solution\PYZus{}training} \PY{o}{=} \PY{n}{solution\PYZus{}training}\PY{o}{.}\PY{n}{tolist}\PY{p}{(}\PY{p}{)}
+    
+\PY{k}{if} \PY{n}{torch}\PY{o}{.}\PY{n}{is\PYZus{}tensor}\PY{p}{(}\PY{n}{target\PYZus{}training}\PY{p}{)}\PY{p}{:}
+    \PY{n}{target\PYZus{}training} \PY{o}{=} \PY{n}{target\PYZus{}training}\PY{o}{.}\PY{n}{tolist}\PY{p}{(}\PY{p}{)}
+
+        
+\PY{k}{with} \PY{n+nb}{open}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{/home/tobias/deal.ii\PYZhy{}candi/deal.II\PYZhy{}v9.2.0/examples/MA/KirasFM\PYZhy{}\PYZhy{}minimal\PYZhy{}example/interface\PYZus{}1\PYZus{}0\PYZus{}1\PYZus{}training.csv}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)} \PY{k}{as} \PY{n}{csvdatei4}\PY{p}{:}
+    \PY{n}{csv\PYZus{}reader\PYZus{}object4} \PY{o}{=} \PY{n}{csv}\PY{o}{.}\PY{n}{reader}\PY{p}{(}\PY{n}{csvdatei4}\PY{p}{,} \PY{n}{delimiter}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{;}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n}{csv\PYZus{}to\PYZus{}list}\PY{p}{(}\PY{n}{csv\PYZus{}reader\PYZus{}object4}\PY{p}{,} \PY{n}{interface\PYZus{}training}\PY{p}{)}
+        
+        
+\PY{k}{with} \PY{n+nb}{open}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{/home/tobias/deal.ii\PYZhy{}candi/deal.II\PYZhy{}v9.2.0/examples/MA/KirasFM\PYZhy{}\PYZhy{}minimal\PYZhy{}example/solution\PYZus{}1\PYZus{}1\PYZus{}training.csv}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)} \PY{k}{as} \PY{n}{csvdatei5}\PY{p}{:}
+    \PY{n}{csv\PYZus{}reader\PYZus{}object5} \PY{o}{=} \PY{n}{csv}\PY{o}{.}\PY{n}{reader}\PY{p}{(}\PY{n}{csvdatei5}\PY{p}{,} \PY{n}{delimiter}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{;}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n}{csv\PYZus{}to\PYZus{}list}\PY{p}{(}\PY{n}{csv\PYZus{}reader\PYZus{}object5}\PY{p}{,} \PY{n}{solution\PYZus{}training}\PY{p}{)}
+        
+        
+\PY{k}{with} \PY{n+nb}{open}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{/home/tobias/deal.ii\PYZhy{}candi/deal.II\PYZhy{}v9.2.0/examples/MA/KirasFM\PYZhy{}\PYZhy{}minimal\PYZhy{}example/interface\PYZus{}0\PYZus{}1\PYZus{}3\PYZus{}training.csv}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)} \PY{k}{as} \PY{n}{csvdatei6}\PY{p}{:}
+    \PY{n}{csv\PYZus{}reader\PYZus{}object6} \PY{o}{=} \PY{n}{csv}\PY{o}{.}\PY{n}{reader}\PY{p}{(}\PY{n}{csvdatei6}\PY{p}{,} \PY{n}{delimiter}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{;}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n}{csv\PYZus{}to\PYZus{}list}\PY{p}{(}\PY{n}{csv\PYZus{}reader\PYZus{}object6}\PY{p}{,} \PY{n}{target\PYZus{}training}\PY{p}{)}
+        
+\PY{n}{interface\PYZus{}training} \PY{o}{=} \PY{n}{torch}\PY{o}{.}\PY{n}{Tensor}\PY{p}{(}\PY{n}{interface\PYZus{}training}\PY{p}{)}
+\PY{c+c1}{\PYZsh{}print(interface)}
+
+\PY{n}{solution\PYZus{}training} \PY{o}{=} \PY{n}{torch}\PY{o}{.}\PY{n}{Tensor}\PY{p}{(}\PY{n}{solution\PYZus{}training}\PY{p}{)}
+\PY{c+c1}{\PYZsh{}print(solution)}
+
+\PY{n}{inp\PYZus{}training} \PY{o}{=} \PY{n}{torch}\PY{o}{.}\PY{n}{cat}\PY{p}{(}\PY{p}{(}\PY{n}{interface\PYZus{}training}\PY{p}{,} \PY{n}{solution\PYZus{}training}\PY{p}{)}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{)}
+\PY{c+c1}{\PYZsh{}inp = solution}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{inp\PYZus{}training}\PY{o}{.}\PY{n}{size}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+
+\PY{n}{target\PYZus{}training} \PY{o}{=} \PY{n}{torch}\PY{o}{.}\PY{n}{Tensor}\PY{p}{(}\PY{n}{target\PYZus{}training}\PY{p}{)}
+\PY{c+c1}{\PYZsh{}target += interface}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{target\PYZus{}training}\PY{o}{.}\PY{n}{size}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+\PY{c+c1}{\PYZsh{}print(inp)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+torch.Size([320, 16])
+torch.Size([320, 8])
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{3}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{interface\PYZus{}test} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+\PY{n}{solution\PYZus{}test} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+\PY{n}{target\PYZus{}test} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+
+\PY{k}{with} \PY{n+nb}{open}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{/home/tobias/deal.ii\PYZhy{}candi/deal.II\PYZhy{}v9.2.0/examples/MA/KirasFM\PYZhy{}\PYZhy{}minimal\PYZhy{}example/interface\PYZus{}1\PYZus{}0\PYZus{}1\PYZus{}test.csv}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)} \PY{k}{as} \PY{n}{csvdatei4}\PY{p}{:}
+    \PY{n}{csv\PYZus{}reader\PYZus{}object4} \PY{o}{=} \PY{n}{csv}\PY{o}{.}\PY{n}{reader}\PY{p}{(}\PY{n}{csvdatei4}\PY{p}{,} \PY{n}{delimiter}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{;}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n}{csv\PYZus{}to\PYZus{}list}\PY{p}{(}\PY{n}{csv\PYZus{}reader\PYZus{}object4}\PY{p}{,} \PY{n}{interface\PYZus{}test}\PY{p}{)}
+        
+        
+\PY{k}{with} \PY{n+nb}{open}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{/home/tobias/deal.ii\PYZhy{}candi/deal.II\PYZhy{}v9.2.0/examples/MA/KirasFM\PYZhy{}\PYZhy{}minimal\PYZhy{}example/solution\PYZus{}1\PYZus{}1\PYZus{}test.csv}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)} \PY{k}{as} \PY{n}{csvdatei5}\PY{p}{:}
+    \PY{n}{csv\PYZus{}reader\PYZus{}object5} \PY{o}{=} \PY{n}{csv}\PY{o}{.}\PY{n}{reader}\PY{p}{(}\PY{n}{csvdatei5}\PY{p}{,} \PY{n}{delimiter}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{;}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n}{csv\PYZus{}to\PYZus{}list}\PY{p}{(}\PY{n}{csv\PYZus{}reader\PYZus{}object5}\PY{p}{,} \PY{n}{solution\PYZus{}test}\PY{p}{)}
+        
+        
+\PY{k}{with} \PY{n+nb}{open}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{/home/tobias/deal.ii\PYZhy{}candi/deal.II\PYZhy{}v9.2.0/examples/MA/KirasFM\PYZhy{}\PYZhy{}minimal\PYZhy{}example/interface\PYZus{}0\PYZus{}1\PYZus{}3\PYZus{}test.csv}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)} \PY{k}{as} \PY{n}{csvdatei6}\PY{p}{:}
+    \PY{n}{csv\PYZus{}reader\PYZus{}object6} \PY{o}{=} \PY{n}{csv}\PY{o}{.}\PY{n}{reader}\PY{p}{(}\PY{n}{csvdatei6}\PY{p}{,} \PY{n}{delimiter}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{;}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n}{csv\PYZus{}to\PYZus{}list}\PY{p}{(}\PY{n}{csv\PYZus{}reader\PYZus{}object6}\PY{p}{,} \PY{n}{target\PYZus{}test}\PY{p}{)}
+        
+\PY{n}{interface\PYZus{}test} \PY{o}{=} \PY{n}{torch}\PY{o}{.}\PY{n}{Tensor}\PY{p}{(}\PY{n}{interface\PYZus{}test}\PY{p}{)}
+\PY{c+c1}{\PYZsh{}print(interface\PYZus{}test)}
+
+\PY{n}{solution\PYZus{}test} \PY{o}{=} \PY{n}{torch}\PY{o}{.}\PY{n}{Tensor}\PY{p}{(}\PY{n}{solution\PYZus{}test}\PY{p}{)}
+\PY{c+c1}{\PYZsh{}print(solution\PYZus{}test)}
+
+\PY{n}{inp\PYZus{}test} \PY{o}{=} \PY{n}{torch}\PY{o}{.}\PY{n}{cat}\PY{p}{(}\PY{p}{(}\PY{n}{interface\PYZus{}test}\PY{p}{,} \PY{n}{solution\PYZus{}test}\PY{p}{)}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{)}
+\PY{c+c1}{\PYZsh{}inp\PYZus{}test = solution\PYZus{}test}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{inp\PYZus{}test}\PY{o}{.}\PY{n}{size}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+
+\PY{n}{target\PYZus{}test} \PY{o}{=} \PY{n}{torch}\PY{o}{.}\PY{n}{Tensor}\PY{p}{(}\PY{n}{target\PYZus{}test}\PY{p}{)}
+\PY{c+c1}{\PYZsh{}target\PYZus{}test += interface\PYZus{}test}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{target\PYZus{}test}\PY{o}{.}\PY{n}{size}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+\PY{c+c1}{\PYZsh{}print(inp\PYZus{}test)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+torch.Size([64, 16])
+torch.Size([64, 8])
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{20}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{import} \PY{n+nn}{torch}\PY{n+nn}{.}\PY{n+nn}{nn} \PY{k}{as} \PY{n+nn}{nn}
+\PY{k+kn}{import} \PY{n+nn}{torch}\PY{n+nn}{.}\PY{n+nn}{nn}\PY{n+nn}{.}\PY{n+nn}{functional} \PY{k}{as} \PY{n+nn}{F}
+
+\PY{k}{class} \PY{n+nc}{Maxwell}\PY{p}{(}\PY{n}{nn}\PY{o}{.}\PY{n}{Module}\PY{p}{)}\PY{p}{:} 
+    \PY{k}{def} \PY{n+nf+fm}{\PYZus{}\PYZus{}init\PYZus{}\PYZus{}}\PY{p}{(}\PY{n+nb+bp}{self}\PY{p}{)}\PY{p}{:} 
+        \PY{n+nb}{super}\PY{p}{(}\PY{n}{Maxwell}\PY{p}{,} \PY{n+nb+bp}{self}\PY{p}{)}\PY{o}{.}\PY{n+nf+fm}{\PYZus{}\PYZus{}init\PYZus{}\PYZus{}}\PY{p}{(}\PY{p}{)}
+        \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{lin1} \PY{o}{=} \PY{n}{nn}\PY{o}{.}\PY{n}{Linear}\PY{p}{(}\PY{l+m+mi}{16}\PY{p}{,} \PY{l+m+mi}{500}\PY{p}{)} 
+        \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{lin2} \PY{o}{=} \PY{n}{nn}\PY{o}{.}\PY{n}{Linear}\PY{p}{(}\PY{l+m+mi}{500}\PY{p}{,} \PY{l+m+mi}{8}\PY{p}{)} 
+        
+    \PY{k}{def} \PY{n+nf}{forward}\PY{p}{(}\PY{n+nb+bp}{self}\PY{p}{,} \PY{n}{x}\PY{p}{)}\PY{p}{:} 
+        \PY{n}{x} \PY{o}{=} \PY{n}{torch}\PY{o}{.}\PY{n}{sigmoid}\PY{p}{(}\PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{lin1}\PY{p}{(}\PY{n}{x}\PY{p}{)}\PY{p}{)} 
+        \PY{c+c1}{\PYZsh{}x = F.relu(self.lin1(x))}
+        \PY{n}{x} \PY{o}{=} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{lin2}\PY{p}{(}\PY{n}{x}\PY{p}{)} 
+        \PY{k}{return} \PY{n}{x}
+            
+\PY{n}{net} \PY{o}{=} \PY{n}{Maxwell}\PY{p}{(}\PY{p}{)} 
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{net}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Maxwell(
+  (lin1): Linear(in\_features=16, out\_features=500, bias=True)
+  (lin2): Linear(in\_features=500, out\_features=8, bias=True)
+)
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{23}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{import} \PY{n+nn}{torch}\PY{n+nn}{.}\PY{n+nn}{optim} \PY{k}{as} \PY{n+nn}{optim}
+\PY{k+kn}{import} \PY{n+nn}{time}
+
+\PY{n}{start\PYZus{}time} \PY{o}{=} \PY{n}{time}\PY{o}{.}\PY{n}{time}\PY{p}{(}\PY{p}{)}
+
+\PY{n}{tol} \PY{o}{=} \PY{l+m+mf}{3e\PYZhy{}3}
+\PY{n}{max\PYZus{}iter} \PY{o}{=} \PY{l+m+mi}{20000}
+\PY{n}{iterations} \PY{o}{=} \PY{l+m+mi}{0} 
+\PY{n}{loss\PYZus{}test} \PY{o}{=} \PY{n}{tol} \PY{o}{+} \PY{l+m+mi}{1}
+
+\PY{n}{optimizer} \PY{o}{=} \PY{n}{optim}\PY{o}{.}\PY{n}{Adam}\PY{p}{(}\PY{n}{net}\PY{o}{.}\PY{n}{parameters}\PY{p}{(}\PY{p}{)}\PY{p}{,} \PY{n}{lr}\PY{o}{=}\PY{l+m+mf}{1e\PYZhy{}5}\PY{p}{)} 
+\PY{n}{criterion} \PY{o}{=} \PY{n}{nn}\PY{o}{.}\PY{n}{MSELoss}\PY{p}{(}\PY{p}{)}
+
+\PY{k}{while}\PY{p}{(}\PY{n}{iterations} \PY{o}{\PYZlt{}} \PY{n}{max\PYZus{}iter} \PY{o+ow}{and} \PY{n}{loss\PYZus{}test} \PY{o}{\PYZgt{}} \PY{n}{tol}\PY{p}{)}\PY{p}{:}
+    
+    \PY{n}{out} \PY{o}{=} \PY{n}{net}\PY{p}{(}\PY{n}{inp\PYZus{}training}\PY{p}{)}
+
+    \PY{n}{optimizer}\PY{o}{.}\PY{n}{zero\PYZus{}grad}\PY{p}{(}\PY{p}{)}
+    \PY{n}{loss} \PY{o}{=} \PY{n}{criterion}\PY{p}{(}\PY{n}{out}\PY{p}{,} \PY{n}{target\PYZus{}training}\PY{p}{)} 
+    \PY{n}{loss\PYZus{}test} \PY{o}{=} \PY{n}{criterion}\PY{p}{(}\PY{n}{net}\PY{p}{(}\PY{n}{inp\PYZus{}test}\PY{p}{)}\PY{p}{,} \PY{n}{target\PYZus{}test}\PY{p}{)}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Loss: }\PY{l+s+si}{\PYZpc{}.5f}\PY{l+s+s2}{\PYZdq{}} \PY{o}{\PYZpc{}} \PY{n}{loss}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Test\PYZhy{}Loss: }\PY{l+s+si}{\PYZpc{}.5f}\PY{l+s+s2}{\PYZdq{}} \PY{o}{\PYZpc{}} \PY{n}{loss\PYZus{}test}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Iterations: }\PY{l+s+si}{\PYZpc{}.0f}\PY{l+s+s2}{\PYZdq{}} \PY{o}{\PYZpc{}} \PY{p}{(}\PY{n}{iterations}\PY{o}{+}\PY{l+m+mi}{1}\PY{p}{)}\PY{p}{)}
+
+    \PY{n}{loss}\PY{o}{.}\PY{n}{backward}\PY{p}{(}\PY{p}{)} 
+    \PY{n}{optimizer}\PY{o}{.}\PY{n}{step}\PY{p}{(}\PY{p}{)} 
+    \PY{n}{iterations} \PY{o}{+}\PY{o}{=} \PY{l+m+mi}{1}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Final Loss: }\PY{l+s+si}{\PYZpc{}.5f}\PY{l+s+s2}{\PYZdq{}} \PY{o}{\PYZpc{}} \PY{n}{loss\PYZus{}test}\PY{p}{)} 
+
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Number of iterations: }\PY{l+s+si}{\PYZpc{}.0f}\PY{l+s+s2}{\PYZdq{}} \PY{o}{\PYZpc{}} \PY{n}{iterations}\PY{p}{)}
+
+\PY{n}{time\PYZus{}taken} \PY{o}{=} \PY{n}{time}\PY{o}{.}\PY{n}{time}\PY{p}{(}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{n}{start\PYZus{}time}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Run\PYZhy{}Time: }\PY{l+s+si}{\PYZpc{}.4f}\PY{l+s+s2}{ s}\PY{l+s+s2}{\PYZdq{}} \PY{o}{\PYZpc{}} \PY{n}{time\PYZus{}taken}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Loss: 0.00016 Test-Loss: 0.00316 Iterations: 1
+Loss: 0.00017 Test-Loss: 0.00301 Iterations: 2
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 3
+Loss: 0.00016 Test-Loss: 0.00322 Iterations: 4
+Loss: 0.00016 Test-Loss: 0.00328 Iterations: 5
+Loss: 0.00016 Test-Loss: 0.00328 Iterations: 6
+Loss: 0.00016 Test-Loss: 0.00323 Iterations: 7
+Loss: 0.00016 Test-Loss: 0.00317 Iterations: 8
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 9
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 10
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 11
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 12
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 13
+Loss: 0.00016 Test-Loss: 0.00317 Iterations: 14
+Loss: 0.00016 Test-Loss: 0.00321 Iterations: 15
+Loss: 0.00016 Test-Loss: 0.00323 Iterations: 16
+Loss: 0.00016 Test-Loss: 0.00323 Iterations: 17
+Loss: 0.00016 Test-Loss: 0.00322 Iterations: 18
+Loss: 0.00016 Test-Loss: 0.00318 Iterations: 19
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 20
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 21
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 22
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 23
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 24
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 25
+Loss: 0.00016 Test-Loss: 0.00317 Iterations: 26
+Loss: 0.00016 Test-Loss: 0.00319 Iterations: 27
+Loss: 0.00016 Test-Loss: 0.00320 Iterations: 28
+Loss: 0.00016 Test-Loss: 0.00320 Iterations: 29
+Loss: 0.00016 Test-Loss: 0.00318 Iterations: 30
+Loss: 0.00016 Test-Loss: 0.00316 Iterations: 31
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 32
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 33
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 34
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 35
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 36
+Loss: 0.00016 Test-Loss: 0.00316 Iterations: 37
+Loss: 0.00016 Test-Loss: 0.00317 Iterations: 38
+Loss: 0.00016 Test-Loss: 0.00318 Iterations: 39
+Loss: 0.00016 Test-Loss: 0.00318 Iterations: 40
+Loss: 0.00016 Test-Loss: 0.00317 Iterations: 41
+Loss: 0.00016 Test-Loss: 0.00316 Iterations: 42
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 43
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 44
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 45
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 46
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 47
+Loss: 0.00016 Test-Loss: 0.00316 Iterations: 48
+Loss: 0.00016 Test-Loss: 0.00316 Iterations: 49
+Loss: 0.00016 Test-Loss: 0.00317 Iterations: 50
+Loss: 0.00016 Test-Loss: 0.00317 Iterations: 51
+Loss: 0.00016 Test-Loss: 0.00317 Iterations: 52
+Loss: 0.00016 Test-Loss: 0.00316 Iterations: 53
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 54
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 55
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 56
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 57
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 58
+Loss: 0.00016 Test-Loss: 0.00316 Iterations: 59
+Loss: 0.00016 Test-Loss: 0.00316 Iterations: 60
+Loss: 0.00016 Test-Loss: 0.00317 Iterations: 61
+Loss: 0.00016 Test-Loss: 0.00316 Iterations: 62
+Loss: 0.00016 Test-Loss: 0.00316 Iterations: 63
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 64
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 65
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 66
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 67
+Loss: 0.00016 Test-Loss: 0.00316 Iterations: 68
+Loss: 0.00016 Test-Loss: 0.00316 Iterations: 69
+Loss: 0.00016 Test-Loss: 0.00316 Iterations: 70
+Loss: 0.00016 Test-Loss: 0.00316 Iterations: 71
+Loss: 0.00016 Test-Loss: 0.00316 Iterations: 72
+Loss: 0.00016 Test-Loss: 0.00316 Iterations: 73
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 74
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 75
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 76
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 77
+Loss: 0.00016 Test-Loss: 0.00316 Iterations: 78
+Loss: 0.00016 Test-Loss: 0.00316 Iterations: 79
+Loss: 0.00016 Test-Loss: 0.00316 Iterations: 80
+Loss: 0.00016 Test-Loss: 0.00316 Iterations: 81
+Loss: 0.00016 Test-Loss: 0.00316 Iterations: 82
+Loss: 0.00016 Test-Loss: 0.00316 Iterations: 83
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 84
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 85
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 86
+Loss: 0.00016 Test-Loss: 0.00316 Iterations: 87
+Loss: 0.00016 Test-Loss: 0.00316 Iterations: 88
+Loss: 0.00016 Test-Loss: 0.00316 Iterations: 89
+Loss: 0.00016 Test-Loss: 0.00316 Iterations: 90
+Loss: 0.00016 Test-Loss: 0.00316 Iterations: 91
+Loss: 0.00016 Test-Loss: 0.00316 Iterations: 92
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 93
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 94
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 95
+Loss: 0.00016 Test-Loss: 0.00316 Iterations: 96
+Loss: 0.00016 Test-Loss: 0.00316 Iterations: 97
+Loss: 0.00016 Test-Loss: 0.00316 Iterations: 98
+Loss: 0.00016 Test-Loss: 0.00316 Iterations: 99
+Loss: 0.00016 Test-Loss: 0.00316 Iterations: 100
+Loss: 0.00016 Test-Loss: 0.00316 Iterations: 101
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 102
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 103
+Loss: 0.00016 Test-Loss: 0.00316 Iterations: 104
+Loss: 0.00016 Test-Loss: 0.00316 Iterations: 105
+Loss: 0.00016 Test-Loss: 0.00316 Iterations: 106
+Loss: 0.00016 Test-Loss: 0.00316 Iterations: 107
+Loss: 0.00016 Test-Loss: 0.00316 Iterations: 108
+Loss: 0.00016 Test-Loss: 0.00316 Iterations: 109
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 110
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 111
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 112
+Loss: 0.00016 Test-Loss: 0.00316 Iterations: 113
+Loss: 0.00016 Test-Loss: 0.00316 Iterations: 114
+Loss: 0.00016 Test-Loss: 0.00316 Iterations: 115
+Loss: 0.00016 Test-Loss: 0.00316 Iterations: 116
+Loss: 0.00016 Test-Loss: 0.00316 Iterations: 117
+Loss: 0.00016 Test-Loss: 0.00316 Iterations: 118
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 119
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 120
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 121
+Loss: 0.00016 Test-Loss: 0.00316 Iterations: 122
+Loss: 0.00016 Test-Loss: 0.00316 Iterations: 123
+Loss: 0.00016 Test-Loss: 0.00316 Iterations: 124
+Loss: 0.00016 Test-Loss: 0.00316 Iterations: 125
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 126
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 127
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 128
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 129
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 130
+Loss: 0.00016 Test-Loss: 0.00316 Iterations: 131
+Loss: 0.00016 Test-Loss: 0.00316 Iterations: 132
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 133
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 134
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 135
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 136
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 137
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 138
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 139
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 140
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 141
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 142
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 143
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 144
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 145
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 146
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 147
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 148
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 149
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 150
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 151
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 152
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 153
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 154
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 155
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 156
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 157
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 158
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 159
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 160
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 161
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 162
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 163
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 164
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 165
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 166
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 167
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 168
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 169
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 170
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 171
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 172
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 173
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 174
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 175
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 176
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 177
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 178
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 179
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 180
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 181
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 182
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 183
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 184
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 185
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 186
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 187
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 188
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 189
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 190
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 191
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 192
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 193
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 194
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 195
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 196
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 197
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 198
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 199
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 200
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 201
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 202
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 203
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 204
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 205
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 206
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 207
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 208
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 209
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 210
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 211
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 212
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 213
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 214
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 215
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 216
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 217
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 218
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 219
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 220
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 221
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 222
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 223
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 224
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 225
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 226
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 227
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 228
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 229
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 230
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 231
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 232
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 233
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 234
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 235
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 236
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 237
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 238
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 239
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 240
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 241
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 242
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 243
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 244
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 245
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 246
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 247
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 248
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 249
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 250
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 251
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 252
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 253
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 254
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 255
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 256
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 257
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 258
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 259
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 260
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 261
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 262
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 263
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 264
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 265
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 266
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 267
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 268
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 269
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 270
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 271
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 272
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 273
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 274
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 275
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 276
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 277
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 278
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 279
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 280
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 281
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 282
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 283
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 284
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 285
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 286
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 287
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 288
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 289
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 290
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 291
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 292
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 293
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 294
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 295
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 296
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 297
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 298
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 299
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 300
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 301
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 302
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 303
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 304
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 305
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 306
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 307
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 308
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 309
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 310
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 311
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 312
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 313
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 314
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 315
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 316
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 317
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 318
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 319
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 320
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 321
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 322
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 323
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 324
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 325
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 326
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 327
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 328
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 329
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 330
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 331
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 332
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 333
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 334
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 335
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 336
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 337
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 338
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 339
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 340
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 341
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 342
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 343
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 344
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 345
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 346
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 347
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 348
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 349
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 350
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 351
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 352
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 353
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 354
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 355
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 356
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 357
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 358
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 359
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 360
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 361
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 362
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 363
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 364
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 365
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 366
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 367
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 368
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 369
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 370
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 371
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 372
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 373
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 374
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 375
+Loss: 0.00016 Test-Loss: 0.00315 Iterations: 376
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 377
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 378
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 379
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 380
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 381
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 382
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 383
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 384
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 385
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 386
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 387
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 388
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 389
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 390
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 391
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 392
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 393
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 394
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 395
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 396
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 397
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 398
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 399
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 400
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 401
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 402
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 403
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 404
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 405
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 406
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 407
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 408
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 409
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 410
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 411
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 412
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 413
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 414
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 415
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 416
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 417
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 418
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 419
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 420
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 421
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 422
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 423
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 424
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 425
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 426
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 427
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 428
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 429
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 430
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 431
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 432
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 433
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 434
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 435
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 436
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 437
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 438
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 439
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 440
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 441
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 442
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 443
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 444
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 445
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 446
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 447
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 448
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 449
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 450
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 451
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 452
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 453
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 454
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 455
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 456
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 457
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 458
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 459
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 460
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 461
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 462
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 463
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 464
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 465
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 466
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 467
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 468
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 469
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 470
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 471
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 472
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 473
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 474
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 475
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 476
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 477
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 478
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 479
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 480
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 481
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 482
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 483
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 484
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 485
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 486
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 487
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 488
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 489
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 490
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 491
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 492
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 493
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 494
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 495
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 496
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 497
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 498
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 499
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 500
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 501
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 502
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 503
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 504
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 505
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 506
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 507
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 508
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 509
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 510
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 511
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 512
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 513
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 514
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 515
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 516
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 517
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 518
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 519
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 520
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 521
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 522
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 523
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 524
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 525
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 526
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 527
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 528
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 529
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 530
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 531
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 532
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 533
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 534
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 535
+Loss: 0.00016 Test-Loss: 0.00314 Iterations: 536
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 537
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 538
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 539
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 540
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 541
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 542
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 543
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 544
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 545
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 546
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 547
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 548
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 549
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 550
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 551
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 552
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 553
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 554
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 555
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 556
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 557
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 558
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 559
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 560
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 561
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 562
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 563
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 564
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 565
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 566
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 567
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 568
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 569
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 570
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 571
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 572
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 573
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 574
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 575
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 576
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 577
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 578
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 579
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 580
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 581
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 582
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 583
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 584
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 585
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 586
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 587
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 588
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 589
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 590
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 591
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 592
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 593
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 594
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 595
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 596
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 597
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 598
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 599
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 600
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 601
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 602
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 603
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 604
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 605
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 606
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 607
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 608
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 609
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 610
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 611
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 612
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 613
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 614
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 615
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 616
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 617
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 618
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 619
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 620
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 621
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 622
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 623
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 624
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 625
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 626
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 627
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 628
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 629
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 630
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 631
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 632
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 633
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 634
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 635
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 636
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 637
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 638
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 639
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 640
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 641
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 642
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 643
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 644
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 645
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 646
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 647
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 648
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 649
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 650
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 651
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 652
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 653
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 654
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 655
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 656
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 657
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 658
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 659
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 660
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 661
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 662
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 663
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 664
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 665
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 666
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 667
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 668
+Loss: 0.00016 Test-Loss: 0.00313 Iterations: 669
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 670
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 671
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 672
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 673
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 674
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 675
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 676
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 677
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 678
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 679
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 680
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 681
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 682
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 683
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 684
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 685
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 686
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 687
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 688
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 689
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 690
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 691
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 692
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 693
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 694
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 695
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 696
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 697
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 698
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 699
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 700
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 701
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 702
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 703
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 704
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 705
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 706
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 707
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 708
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 709
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 710
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 711
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 712
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 713
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 714
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 715
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 716
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 717
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 718
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 719
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 720
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 721
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 722
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 723
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 724
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 725
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 726
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 727
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 728
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 729
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 730
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 731
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 732
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 733
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 734
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 735
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 736
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 737
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 738
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 739
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 740
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 741
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 742
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 743
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 744
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 745
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 746
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 747
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 748
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 749
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 750
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 751
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 752
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 753
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 754
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 755
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 756
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 757
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 758
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 759
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 760
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 761
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 762
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 763
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 764
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 765
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 766
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 767
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 768
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 769
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 770
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 771
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 772
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 773
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 774
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 775
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 776
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 777
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 778
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 779
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 780
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 781
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 782
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 783
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 784
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 785
+Loss: 0.00016 Test-Loss: 0.00312 Iterations: 786
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 787
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 788
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 789
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 790
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 791
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 792
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 793
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 794
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 795
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 796
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 797
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 798
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 799
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 800
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 801
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 802
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 803
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 804
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 805
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 806
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 807
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 808
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 809
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 810
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 811
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 812
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 813
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 814
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 815
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 816
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 817
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 818
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 819
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 820
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 821
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 822
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 823
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 824
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 825
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 826
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 827
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 828
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 829
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 830
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 831
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 832
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 833
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 834
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 835
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 836
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 837
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 838
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 839
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 840
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 841
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 842
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 843
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 844
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 845
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 846
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 847
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 848
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 849
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 850
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 851
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 852
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 853
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 854
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 855
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 856
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 857
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 858
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 859
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 860
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 861
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 862
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 863
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 864
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 865
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 866
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 867
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 868
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 869
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 870
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 871
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 872
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 873
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 874
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 875
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 876
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 877
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 878
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 879
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 880
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 881
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 882
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 883
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 884
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 885
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 886
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 887
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 888
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 889
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 890
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 891
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 892
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 893
+Loss: 0.00016 Test-Loss: 0.00311 Iterations: 894
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 895
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 896
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 897
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 898
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 899
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 900
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 901
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 902
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 903
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 904
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 905
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 906
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 907
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 908
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 909
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 910
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 911
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 912
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 913
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 914
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 915
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 916
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 917
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 918
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 919
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 920
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 921
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 922
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 923
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 924
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 925
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 926
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 927
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 928
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 929
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 930
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 931
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 932
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 933
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 934
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 935
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 936
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 937
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 938
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 939
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 940
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 941
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 942
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 943
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 944
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 945
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 946
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 947
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 948
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 949
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 950
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 951
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 952
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 953
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 954
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 955
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 956
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 957
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 958
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 959
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 960
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 961
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 962
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 963
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 964
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 965
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 966
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 967
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 968
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 969
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 970
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 971
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 972
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 973
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 974
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 975
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 976
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 977
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 978
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 979
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 980
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 981
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 982
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 983
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 984
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 985
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 986
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 987
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 988
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 989
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 990
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 991
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 992
+Loss: 0.00016 Test-Loss: 0.00310 Iterations: 993
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 994
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 995
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 996
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 997
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 998
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 999
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1000
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1001
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1002
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1003
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1004
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1005
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1006
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1007
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1008
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1009
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1010
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1011
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1012
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1013
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1014
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1015
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1016
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1017
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1018
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1019
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1020
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1021
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1022
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1023
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1024
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1025
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1026
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1027
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1028
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1029
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1030
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1031
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1032
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1033
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1034
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1035
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1036
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1037
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1038
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1039
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1040
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1041
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1042
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1043
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1044
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1045
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1046
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1047
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1048
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1049
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1050
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1051
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1052
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1053
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1054
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1055
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1056
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1057
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1058
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1059
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1060
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1061
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1062
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1063
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1064
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1065
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1066
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1067
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1068
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1069
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1070
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1071
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1072
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1073
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1074
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1075
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1076
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1077
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1078
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1079
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1080
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1081
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1082
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1083
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1084
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1085
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1086
+Loss: 0.00016 Test-Loss: 0.00309 Iterations: 1087
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1088
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1089
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1090
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1091
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1092
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1093
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1094
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1095
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1096
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1097
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1098
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1099
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1100
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1101
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1102
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1103
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1104
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1105
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1106
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1107
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1108
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1109
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1110
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1111
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1112
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1113
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1114
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1115
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1116
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1117
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1118
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1119
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1120
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1121
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1122
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1123
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1124
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1125
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1126
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1127
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1128
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1129
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1130
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1131
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1132
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1133
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1134
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1135
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1136
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1137
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1138
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1139
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1140
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1141
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1142
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1143
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1144
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1145
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1146
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1147
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1148
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1149
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1150
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1151
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1152
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1153
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1154
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1155
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1156
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1157
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1158
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1159
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1160
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1161
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1162
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1163
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1164
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1165
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1166
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1167
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1168
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1169
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1170
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1171
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1172
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1173
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1174
+Loss: 0.00016 Test-Loss: 0.00308 Iterations: 1175
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1176
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1177
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1178
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1179
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1180
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1181
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1182
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1183
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1184
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1185
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1186
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1187
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1188
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1189
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1190
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1191
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1192
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1193
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1194
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1195
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1196
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1197
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1198
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1199
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1200
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1201
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1202
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1203
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1204
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1205
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1206
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1207
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1208
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1209
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1210
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1211
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1212
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1213
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1214
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1215
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1216
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1217
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1218
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1219
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1220
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1221
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1222
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1223
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1224
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1225
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1226
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1227
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1228
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1229
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1230
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1231
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1232
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1233
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1234
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1235
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1236
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1237
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1238
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1239
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1240
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1241
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1242
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1243
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1244
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1245
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1246
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1247
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1248
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1249
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1250
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1251
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1252
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1253
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1254
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1255
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1256
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1257
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1258
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1259
+Loss: 0.00016 Test-Loss: 0.00307 Iterations: 1260
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1261
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1262
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1263
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1264
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1265
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1266
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1267
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1268
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1269
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1270
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1271
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1272
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1273
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1274
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1275
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1276
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1277
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1278
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1279
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1280
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1281
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1282
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1283
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1284
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1285
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1286
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1287
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1288
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1289
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1290
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1291
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1292
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1293
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1294
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1295
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1296
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1297
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1298
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1299
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1300
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1301
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1302
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1303
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1304
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1305
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1306
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1307
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1308
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1309
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1310
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1311
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1312
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1313
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1314
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1315
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1316
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1317
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1318
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1319
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1320
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1321
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1322
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1323
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1324
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1325
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1326
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1327
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1328
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1329
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1330
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1331
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1332
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1333
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1334
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1335
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1336
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1337
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1338
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1339
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1340
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1341
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1342
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1343
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1344
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1345
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1346
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1347
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1348
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1349
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1350
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1351
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1352
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1353
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1354
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1355
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1356
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1357
+Loss: 0.00016 Test-Loss: 0.00306 Iterations: 1358
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1359
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1360
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1361
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1362
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1363
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1364
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1365
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1366
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1367
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1368
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1369
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1370
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1371
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1372
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1373
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1374
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1375
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1376
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1377
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1378
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1379
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1380
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1381
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1382
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1383
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1384
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1385
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1386
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1387
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1388
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1389
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1390
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1391
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1392
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1393
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1394
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1395
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1396
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1397
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1398
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1399
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1400
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1401
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1402
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1403
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1404
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1405
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1406
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1407
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1408
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1409
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1410
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1411
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1412
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1413
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1414
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1415
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1416
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1417
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1418
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1419
+Loss: 0.00016 Test-Loss: 0.00305 Iterations: 1420
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1421
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1422
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1423
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1424
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1425
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1426
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1427
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1428
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1429
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1430
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1431
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1432
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1433
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1434
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1435
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1436
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1437
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1438
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1439
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1440
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1441
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1442
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1443
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1444
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1445
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1446
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1447
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1448
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1449
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1450
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1451
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1452
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1453
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1454
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1455
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1456
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1457
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1458
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1459
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1460
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1461
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1462
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1463
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1464
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1465
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1466
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1467
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1468
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1469
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1470
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1471
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1472
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1473
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1474
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1475
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1476
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1477
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1478
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1479
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1480
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1481
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1482
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1483
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1484
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1485
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1486
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1487
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1488
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1489
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1490
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1491
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1492
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1493
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1494
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1495
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1496
+Loss: 0.00016 Test-Loss: 0.00303 Iterations: 1497
+Loss: 0.00016 Test-Loss: 0.00303 Iterations: 1498
+Loss: 0.00016 Test-Loss: 0.00303 Iterations: 1499
+Loss: 0.00016 Test-Loss: 0.00303 Iterations: 1500
+Loss: 0.00016 Test-Loss: 0.00303 Iterations: 1501
+Loss: 0.00016 Test-Loss: 0.00303 Iterations: 1502
+Loss: 0.00016 Test-Loss: 0.00303 Iterations: 1503
+Loss: 0.00016 Test-Loss: 0.00303 Iterations: 1504
+Loss: 0.00016 Test-Loss: 0.00303 Iterations: 1505
+Loss: 0.00016 Test-Loss: 0.00303 Iterations: 1506
+Loss: 0.00016 Test-Loss: 0.00303 Iterations: 1507
+Loss: 0.00016 Test-Loss: 0.00303 Iterations: 1508
+Loss: 0.00016 Test-Loss: 0.00303 Iterations: 1509
+Loss: 0.00016 Test-Loss: 0.00303 Iterations: 1510
+Loss: 0.00016 Test-Loss: 0.00303 Iterations: 1511
+Loss: 0.00016 Test-Loss: 0.00303 Iterations: 1512
+Loss: 0.00016 Test-Loss: 0.00303 Iterations: 1513
+Loss: 0.00016 Test-Loss: 0.00303 Iterations: 1514
+Loss: 0.00016 Test-Loss: 0.00303 Iterations: 1515
+Loss: 0.00016 Test-Loss: 0.00303 Iterations: 1516
+Loss: 0.00016 Test-Loss: 0.00303 Iterations: 1517
+Loss: 0.00016 Test-Loss: 0.00303 Iterations: 1518
+Loss: 0.00016 Test-Loss: 0.00303 Iterations: 1519
+Loss: 0.00016 Test-Loss: 0.00303 Iterations: 1520
+Loss: 0.00016 Test-Loss: 0.00303 Iterations: 1521
+Loss: 0.00016 Test-Loss: 0.00303 Iterations: 1522
+Loss: 0.00016 Test-Loss: 0.00303 Iterations: 1523
+Loss: 0.00016 Test-Loss: 0.00303 Iterations: 1524
+Loss: 0.00016 Test-Loss: 0.00303 Iterations: 1525
+Loss: 0.00016 Test-Loss: 0.00303 Iterations: 1526
+Loss: 0.00016 Test-Loss: 0.00303 Iterations: 1527
+Loss: 0.00016 Test-Loss: 0.00303 Iterations: 1528
+Loss: 0.00016 Test-Loss: 0.00303 Iterations: 1529
+Loss: 0.00016 Test-Loss: 0.00303 Iterations: 1530
+Loss: 0.00016 Test-Loss: 0.00303 Iterations: 1531
+Loss: 0.00016 Test-Loss: 0.00303 Iterations: 1532
+Loss: 0.00016 Test-Loss: 0.00303 Iterations: 1533
+Loss: 0.00016 Test-Loss: 0.00303 Iterations: 1534
+Loss: 0.00016 Test-Loss: 0.00303 Iterations: 1535
+Loss: 0.00016 Test-Loss: 0.00303 Iterations: 1536
+Loss: 0.00016 Test-Loss: 0.00303 Iterations: 1537
+Loss: 0.00016 Test-Loss: 0.00303 Iterations: 1538
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1539
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1540
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1541
+Loss: 0.00016 Test-Loss: 0.00304 Iterations: 1542
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1543
+Loss: 0.00016 Test-Loss: 0.00303 Iterations: 1544
+Loss: 0.00016 Test-Loss: 0.00303 Iterations: 1545
+Loss: 0.00016 Test-Loss: 0.00303 Iterations: 1546
+Loss: 0.00016 Test-Loss: 0.00303 Iterations: 1547
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1548
+Loss: 0.00016 Test-Loss: 0.00303 Iterations: 1549
+Loss: 0.00016 Test-Loss: 0.00303 Iterations: 1550
+Loss: 0.00016 Test-Loss: 0.00303 Iterations: 1551
+Loss: 0.00016 Test-Loss: 0.00303 Iterations: 1552
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1553
+Loss: 0.00016 Test-Loss: 0.00303 Iterations: 1554
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1555
+Loss: 0.00016 Test-Loss: 0.00303 Iterations: 1556
+Loss: 0.00016 Test-Loss: 0.00303 Iterations: 1557
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1558
+Loss: 0.00016 Test-Loss: 0.00303 Iterations: 1559
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1560
+Loss: 0.00016 Test-Loss: 0.00303 Iterations: 1561
+Loss: 0.00016 Test-Loss: 0.00303 Iterations: 1562
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1563
+Loss: 0.00016 Test-Loss: 0.00303 Iterations: 1564
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1565
+Loss: 0.00016 Test-Loss: 0.00303 Iterations: 1566
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1567
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1568
+Loss: 0.00016 Test-Loss: 0.00303 Iterations: 1569
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1570
+Loss: 0.00016 Test-Loss: 0.00303 Iterations: 1571
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1572
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1573
+Loss: 0.00016 Test-Loss: 0.00303 Iterations: 1574
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1575
+Loss: 0.00016 Test-Loss: 0.00303 Iterations: 1576
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1577
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1578
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1579
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1580
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1581
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1582
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1583
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1584
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1585
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1586
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1587
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1588
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1589
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1590
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1591
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1592
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1593
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1594
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1595
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1596
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1597
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1598
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1599
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1600
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1601
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1602
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1603
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1604
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1605
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1606
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1607
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1608
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1609
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1610
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1611
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1612
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1613
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1614
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1615
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1616
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1617
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1618
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1619
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1620
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1621
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1622
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1623
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1624
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1625
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1626
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1627
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1628
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1629
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1630
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1631
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1632
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1633
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1634
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1635
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1636
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1637
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1638
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1639
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1640
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1641
+Loss: 0.00016 Test-Loss: 0.00302 Iterations: 1642
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1643
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1644
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1645
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1646
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1647
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1648
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1649
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1650
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1651
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1652
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1653
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1654
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1655
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1656
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1657
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1658
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1659
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1660
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1661
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1662
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1663
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1664
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1665
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1666
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1667
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1668
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1669
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1670
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1671
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1672
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1673
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1674
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1675
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1676
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1677
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1678
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1679
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1680
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1681
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1682
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1683
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1684
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1685
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1686
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1687
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1688
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1689
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1690
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1691
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1692
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1693
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1694
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1695
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1696
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1697
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1698
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1699
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1700
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1701
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1702
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1703
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1704
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1705
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1706
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1707
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1708
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1709
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1710
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1711
+Loss: 0.00016 Test-Loss: 0.00301 Iterations: 1712
+Loss: 0.00016 Test-Loss: 0.00300 Iterations: 1713
+Loss: 0.00016 Test-Loss: 0.00300 Iterations: 1714
+Loss: 0.00016 Test-Loss: 0.00300 Iterations: 1715
+Loss: 0.00016 Test-Loss: 0.00300 Iterations: 1716
+Loss: 0.00016 Test-Loss: 0.00300 Iterations: 1717
+Loss: 0.00016 Test-Loss: 0.00300 Iterations: 1718
+Loss: 0.00016 Test-Loss: 0.00300 Iterations: 1719
+Loss: 0.00016 Test-Loss: 0.00300 Iterations: 1720
+Loss: 0.00016 Test-Loss: 0.00300 Iterations: 1721
+Loss: 0.00016 Test-Loss: 0.00300 Iterations: 1722
+Loss: 0.00016 Test-Loss: 0.00300 Iterations: 1723
+Loss: 0.00016 Test-Loss: 0.00300 Iterations: 1724
+Loss: 0.00016 Test-Loss: 0.00300 Iterations: 1725
+Loss: 0.00016 Test-Loss: 0.00300 Iterations: 1726
+Loss: 0.00016 Test-Loss: 0.00300 Iterations: 1727
+Loss: 0.00016 Test-Loss: 0.00300 Iterations: 1728
+Loss: 0.00016 Test-Loss: 0.00300 Iterations: 1729
+Loss: 0.00016 Test-Loss: 0.00300 Iterations: 1730
+Loss: 0.00016 Test-Loss: 0.00300 Iterations: 1731
+Loss: 0.00016 Test-Loss: 0.00300 Iterations: 1732
+Loss: 0.00016 Test-Loss: 0.00300 Iterations: 1733
+Loss: 0.00016 Test-Loss: 0.00300 Iterations: 1734
+Loss: 0.00016 Test-Loss: 0.00300 Iterations: 1735
+Loss: 0.00016 Test-Loss: 0.00300 Iterations: 1736
+Loss: 0.00016 Test-Loss: 0.00300 Iterations: 1737
+Loss: 0.00016 Test-Loss: 0.00300 Iterations: 1738
+Loss: 0.00016 Test-Loss: 0.00300 Iterations: 1739
+Loss: 0.00016 Test-Loss: 0.00300 Iterations: 1740
+Loss: 0.00016 Test-Loss: 0.00300 Iterations: 1741
+Loss: 0.00016 Test-Loss: 0.00300 Iterations: 1742
+Loss: 0.00016 Test-Loss: 0.00300 Iterations: 1743
+Final Loss: 0.00300
+Number of iterations: 1743
+Run-Time: 2.8830 s
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{45}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{import} \PY{n+nn}{matplotlib}\PY{n+nn}{.}\PY{n+nn}{pyplot} \PY{k}{as} \PY{n+nn}{plt}
+
+\PY{n}{interface\PYZus{}switched} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+\PY{k}{with} \PY{n+nb}{open}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{/home/tobias/deal.ii\PYZhy{}candi/deal.II\PYZhy{}v9.2.0/examples/MA/KirasFM\PYZhy{}\PYZhy{}minimal\PYZhy{}example/interface\PYZus{}1\PYZus{}0\PYZus{}1\PYZus{}training.csv}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)} \PY{k}{as} \PY{n}{csvdatei1}\PY{p}{:}
+    \PY{n}{csv\PYZus{}reader\PYZus{}object1} \PY{o}{=} \PY{n}{csv}\PY{o}{.}\PY{n}{reader}\PY{p}{(}\PY{n}{csvdatei1}\PY{p}{,} \PY{n}{delimiter}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{;}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n}{csv\PYZus{}to\PYZus{}list}\PY{p}{(}\PY{n}{csv\PYZus{}reader\PYZus{}object1}\PY{p}{,} \PY{n}{interface\PYZus{}switched}\PY{p}{)}
+    
+\PY{k}{with} \PY{n+nb}{open}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{/home/tobias/deal.ii\PYZhy{}candi/deal.II\PYZhy{}v9.2.0/examples/MA/KirasFM\PYZhy{}\PYZhy{}minimal\PYZhy{}example/interface\PYZus{}0\PYZus{}1\PYZus{}1\PYZus{}training.csv}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)} \PY{k}{as} \PY{n}{csvdatei2}\PY{p}{:}
+    \PY{n}{csv\PYZus{}reader\PYZus{}object2} \PY{o}{=} \PY{n}{csv}\PY{o}{.}\PY{n}{reader}\PY{p}{(}\PY{n}{csvdatei2}\PY{p}{,} \PY{n}{delimiter}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{;}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n}{csv\PYZus{}to\PYZus{}list}\PY{p}{(}\PY{n}{csv\PYZus{}reader\PYZus{}object2}\PY{p}{,} \PY{n}{interface\PYZus{}switched}\PY{p}{)}
+    
+\PY{n}{interface\PYZus{}switched} \PY{o}{=} \PY{n}{torch}\PY{o}{.}\PY{n}{Tensor}\PY{p}{(}\PY{n}{interface\PYZus{}switched}\PY{p}{)}
+
+\PY{n}{interface\PYZus{}switched\PYZus{}test} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+\PY{k}{with} \PY{n+nb}{open}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{/home/tobias/deal.ii\PYZhy{}candi/deal.II\PYZhy{}v9.2.0/examples/MA/KirasFM\PYZhy{}\PYZhy{}minimal\PYZhy{}example/interface\PYZus{}1\PYZus{}0\PYZus{}1\PYZus{}test.csv}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)} \PY{k}{as} \PY{n}{csvdatei3}\PY{p}{:}
+    \PY{n}{csv\PYZus{}reader\PYZus{}object3} \PY{o}{=} \PY{n}{csv}\PY{o}{.}\PY{n}{reader}\PY{p}{(}\PY{n}{csvdatei3}\PY{p}{,} \PY{n}{delimiter}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{;}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n}{csv\PYZus{}to\PYZus{}list}\PY{p}{(}\PY{n}{csv\PYZus{}reader\PYZus{}object3}\PY{p}{,} \PY{n}{interface\PYZus{}switched\PYZus{}test}\PY{p}{)}
+    
+\PY{k}{with} \PY{n+nb}{open}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{/home/tobias/deal.ii\PYZhy{}candi/deal.II\PYZhy{}v9.2.0/examples/MA/KirasFM\PYZhy{}\PYZhy{}minimal\PYZhy{}example/interface\PYZus{}0\PYZus{}1\PYZus{}1\PYZus{}test.csv}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)} \PY{k}{as} \PY{n}{csvdatei4}\PY{p}{:}
+    \PY{n}{csv\PYZus{}reader\PYZus{}object4} \PY{o}{=} \PY{n}{csv}\PY{o}{.}\PY{n}{reader}\PY{p}{(}\PY{n}{csvdatei4}\PY{p}{,} \PY{n}{delimiter}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{;}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n}{csv\PYZus{}to\PYZus{}list}\PY{p}{(}\PY{n}{csv\PYZus{}reader\PYZus{}object4}\PY{p}{,} \PY{n}{interface\PYZus{}switched\PYZus{}test}\PY{p}{)}
+
+\PY{n}{interface\PYZus{}switched\PYZus{}test} \PY{o}{=} \PY{n}{torch}\PY{o}{.}\PY{n}{Tensor}\PY{p}{(}\PY{n}{interface\PYZus{}switched\PYZus{}test}\PY{p}{)}
+
+\PY{n}{n1} \PY{o}{=} \PY{l+m+mi}{1}
+\PY{n}{n2} \PY{o}{=} \PY{n}{target\PYZus{}training}\PY{o}{.}\PY{n}{size}\PY{p}{(}\PY{p}{)}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}
+\PY{n}{n3} \PY{o}{=} \PY{n}{target\PYZus{}test}\PY{o}{.}\PY{n}{size}\PY{p}{(}\PY{p}{)}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}
+
+\PY{n}{x1} \PY{o}{=} \PY{p}{[}\PY{n}{i} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{n2}\PY{p}{)}\PY{p}{]}
+\PY{n}{y11} \PY{o}{=} \PY{p}{[}\PY{n}{target\PYZus{}training}\PY{o}{.}\PY{n}{tolist}\PY{p}{(}\PY{p}{)}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{n}{n1}\PY{p}{]} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{n2}\PY{p}{)}\PY{p}{]}
+\PY{n}{y12} \PY{o}{=} \PY{p}{[}\PY{p}{(}\PY{n}{net}\PY{p}{(}\PY{n}{inp\PYZus{}training}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{n}{target\PYZus{}training}\PY{p}{)}\PY{o}{.}\PY{n}{tolist}\PY{p}{(}\PY{p}{)}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{n}{n1}\PY{p}{]} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{n2}\PY{p}{)}\PY{p}{]}
+\PY{c+c1}{\PYZsh{}y13 = [(interface\PYZus{}switched \PYZhy{} target).tolist()[i][n1] for i in range(n2)]}
+\PY{n}{y13} \PY{o}{=} \PY{p}{[}\PY{p}{(}\PY{n}{interface\PYZus{}training} \PY{o}{\PYZhy{}} \PY{n}{target\PYZus{}training}\PY{p}{)}\PY{o}{.}\PY{n}{tolist}\PY{p}{(}\PY{p}{)}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{n}{n1}\PY{p}{]} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{n2}\PY{p}{)}\PY{p}{]}
+
+\PY{n}{x2} \PY{o}{=} \PY{p}{[}\PY{n}{i} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{n3}\PY{p}{)}\PY{p}{]}
+\PY{n}{y21} \PY{o}{=} \PY{p}{[}\PY{n}{target\PYZus{}test}\PY{o}{.}\PY{n}{tolist}\PY{p}{(}\PY{p}{)}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{n}{n1}\PY{p}{]} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{n3}\PY{p}{)}\PY{p}{]}
+\PY{n}{y22} \PY{o}{=} \PY{p}{[}\PY{p}{(}\PY{n}{net}\PY{p}{(}\PY{n}{inp\PYZus{}test}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{n}{target\PYZus{}test}\PY{p}{)}\PY{o}{.}\PY{n}{tolist}\PY{p}{(}\PY{p}{)}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{n}{n1}\PY{p}{]} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{n3}\PY{p}{)}\PY{p}{]}
+\PY{c+c1}{\PYZsh{}y23 = [(interface\PYZus{}switched\PYZus{}test \PYZhy{} target\PYZus{}test).tolist()[i][n1] for i in range(n3)]}
+\PY{n}{y23} \PY{o}{=} \PY{p}{[}\PY{p}{(}\PY{n}{interface\PYZus{}test} \PY{o}{\PYZhy{}} \PY{n}{target\PYZus{}test}\PY{p}{)}\PY{o}{.}\PY{n}{tolist}\PY{p}{(}\PY{p}{)}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{n}{n1}\PY{p}{]} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{n3}\PY{p}{)}\PY{p}{]}
+\PY{c+c1}{\PYZsh{}print(x)}
+
+\PY{n}{plt}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{x2}\PY{p}{,} \PY{n}{y21}\PY{p}{)}
+\PY{c+c1}{\PYZsh{}plt.plot(x1, y11)}
+
+\PY{n}{plt}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{x2}\PY{p}{,} \PY{n}{y22}\PY{p}{)}
+\PY{c+c1}{\PYZsh{}plt.plot(x1, y12)}
+
+\PY{n}{plt}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{x2}\PY{p}{,} \PY{n}{y23}\PY{p}{)}
+\PY{c+c1}{\PYZsh{}plt.plot(x1, y13)}
+
+\PY{n}{x\PYZus{}list} \PY{o}{=} \PY{p}{[}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,}\PY{l+m+mi}{1}\PY{p}{)}\PY{p}{,} \PY{p}{(}\PY{l+m+mi}{2}\PY{p}{,}\PY{l+m+mi}{3}\PY{p}{)}\PY{p}{]}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{x\PYZus{}list}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+[(0, 1), (2, 3)]
+    \end{Verbatim}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_5_1.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{25}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{interface} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+\PY{n}{solution} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+
+\PY{k}{with} \PY{n+nb}{open}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{/home/tobias/deal.ii\PYZhy{}candi/deal.II\PYZhy{}v9.2.0/examples/MA/KirasFM\PYZhy{}\PYZhy{}minimal\PYZhy{}example/interface\PYZus{}1\PYZus{}0\PYZus{}1.csv}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)} \PY{k}{as} \PY{n}{csvdatei1}\PY{p}{:}
+    \PY{n}{csv\PYZus{}reader\PYZus{}object1} \PY{o}{=} \PY{n}{csv}\PY{o}{.}\PY{n}{reader}\PY{p}{(}\PY{n}{csvdatei1}\PY{p}{,} \PY{n}{delimiter}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{;}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n}{csv\PYZus{}to\PYZus{}list}\PY{p}{(}\PY{n}{csv\PYZus{}reader\PYZus{}object1}\PY{p}{,} \PY{n}{interface}\PY{p}{)}        
+        
+\PY{k}{with} \PY{n+nb}{open}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{/home/tobias/deal.ii\PYZhy{}candi/deal.II\PYZhy{}v9.2.0/examples/MA/KirasFM\PYZhy{}\PYZhy{}minimal\PYZhy{}example/solution\PYZus{}1\PYZus{}1.csv}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)} \PY{k}{as} \PY{n}{csvdatei2}\PY{p}{:}
+    \PY{n}{csv\PYZus{}reader\PYZus{}object2} \PY{o}{=} \PY{n}{csv}\PY{o}{.}\PY{n}{reader}\PY{p}{(}\PY{n}{csvdatei2}\PY{p}{,} \PY{n}{delimiter}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{;}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n}{csv\PYZus{}to\PYZus{}list}\PY{p}{(}\PY{n}{csv\PYZus{}reader\PYZus{}object2}\PY{p}{,} \PY{n}{solution}\PY{p}{)}
+    
+\PY{n}{interface} \PY{o}{=} \PY{n}{torch}\PY{o}{.}\PY{n}{Tensor}\PY{p}{(}\PY{n}{interface}\PY{p}{)}
+\PY{n}{solution} \PY{o}{=} \PY{n}{torch}\PY{o}{.}\PY{n}{Tensor}\PY{p}{(}\PY{n}{solution}\PY{p}{)}
+\PY{n}{inp} \PY{o}{=} \PY{n}{torch}\PY{o}{.}\PY{n}{cat}\PY{p}{(}\PY{p}{(}\PY{n}{interface}\PY{p}{,} \PY{n}{solution}\PY{p}{)}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{inp}\PY{o}{.}\PY{n}{size}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+
+\PY{n}{out\PYZus{}list} \PY{o}{=} \PY{n}{net}\PY{p}{(}\PY{n}{inp}\PY{p}{)}\PY{o}{.}\PY{n}{tolist}\PY{p}{(}\PY{p}{)}
+
+\PY{k}{with} \PY{n+nb}{open}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{/home/tobias/deal.ii\PYZhy{}candi/deal.II\PYZhy{}v9.2.0/examples/MA/KirasFM\PYZhy{}\PYZhy{}minimal\PYZhy{}example/interface\PYZus{}0\PYZus{}1\PYZus{}3\PYZus{}nn.csv}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{w}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)} \PY{k}{as} \PY{n}{interface\PYZus{}0\PYZus{}1\PYZus{}3\PYZus{}nn}\PY{p}{:}
+    \PY{n}{writer} \PY{o}{=} \PY{n}{csv}\PY{o}{.}\PY{n}{writer}\PY{p}{(}\PY{n}{interface\PYZus{}0\PYZus{}1\PYZus{}3\PYZus{}nn}\PY{p}{,} \PY{n}{delimiter}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{;}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{escapechar}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{ }\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{quoting}\PY{o}{=}\PY{n}{csv}\PY{o}{.}\PY{n}{QUOTE\PYZus{}NONE}\PY{p}{)}
+    
+    \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{out\PYZus{}list}\PY{p}{)}\PY{p}{)}\PY{p}{:}
+        \PY{n}{row} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+        \PY{k}{for} \PY{n}{j} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{4}\PY{p}{)}\PY{p}{:}
+            \PY{n}{row} \PY{o}{+}\PY{o}{=} \PY{p}{[}\PY{p}{(}\PY{n}{out\PYZus{}list}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{2}\PY{o}{*}\PY{n}{j}\PY{p}{]}\PY{p}{,}\PY{n}{out\PYZus{}list}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{2}\PY{o}{*}\PY{n}{j}\PY{o}{+}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{(0,0)}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+        \PY{n}{row} \PY{o}{+}\PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{ }\PY{l+s+s1}{\PYZsq{}}
+        \PY{n}{writer}\PY{o}{.}\PY{n}{writerow}\PY{p}{(}\PY{n}{row}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+torch.Size([32, 16])
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{ }{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+
+\end{Verbatim}
+\end{tcolorbox}
+
+
+    % Add a bibliography block to the postdoc
+    
+    
+    
+\end{document}
