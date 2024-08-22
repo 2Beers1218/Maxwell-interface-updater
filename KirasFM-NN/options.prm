@@ -1,0 +1,50 @@
+# Listing of Parameters
+# ---------------------
+
+subsection Mesh & geometry parameters
+  # The dimension of the Nedelec elements
+  set Dimension             = 2
+
+  # Polynomial degree of the used Nedelec elements
+  set Polynomial degree     = 2
+
+  # Number of global mesh refinement steps applied to initial coarse grid
+  set Number of refinements = 3 #4
+
+  # Number of global iterations of the outer jacobi fixpoint iterations
+  set Number of global iterations = 1
+
+  # Scaling factor of the grid
+  set Size of grid          = 16
+end
+
+# === MPI parameter ===
+subsection MPI parameters
+  # Number of threads assigned to each domain
+  set CPUs per domain       = 1
+
+  # Number of slizes (length) that will be created
+  set slizes                = 2
+end
+
+
+# === material constants ===
+subsection Material parameters
+  # A list of the different refrectiv indicies, where the first index corresponds to the material id 0, the second refrectiv index to the material id 1 an so on
+  set List of refrective indicies = 1.49 1.49129
+end
+
+# === physical constants ===
+subsection Physical constants
+  # Frequency
+  set lambda = 3.0 #0.66
+end
+
+
+subsection Output parameters
+  # Name of the output file (without extension)
+  set Output file   = solution
+
+  # A name for the output format to be used
+  set Output format = vtu
+end
