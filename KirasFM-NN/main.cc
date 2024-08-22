@@ -1,14 +1,25 @@
-  // === C++ Includes ===
+// === C++ Includes ===
 #include <iostream>
+#include <algorithm>
+#include <fstream>
 
-  // === my includes ===
+// === boost ===
+#include <boost/algorithm/string.hpp>
+
+// === my includes ===
 #include <surface_communicator.h>
 #include <grid_generator.h>
 #include <maxwell_solver.h>
 
+
+
 namespace KirasFM {
   using namespace dealii;
 
+  bool doesFileExist(const std::string& filename) {
+    std::ifstream file(filename.c_str());
+    return file.good();
+  }
   
   template<int dim>
   class DDM {
@@ -23,7 +34,7 @@ namespace KirasFM {
       );
 
       void initialize();
-      void step(int steps);
+      void step(int steps, bool nn);
       void print_result() const;
 
     private:
@@ -88,28 +99,64 @@ namespace KirasFM {
   }
 
   template<int dim>
-  void DDM<dim>::step(int steps) {
+  void DDM<dim>::step(int steps, bool nn) {
     
     // update the interfaces (compute g_in)
     for( unsigned int i = 0; i < size; i++ ) 
       thm[i].update_interface_rhs();
 
+
     // Gather g_in:
-    for( unsigned int i = 0; i < size; i++ ) 
+    for( unsigned int i = 0; i < size; i++ )
       g_in.update(thm[i].return_g_in(), i);
 
-    // Print to file
-    for( unsigned int i = 0; i < size; i++ ) 
-      for( unsigned int j = 0; j < size; j++ ) {
-        std::string file_name = "interface_" + std::to_string(i) + "_" + std::to_string(j) + "_" + std::to_string(steps) + ".csv";
-        g_in.to_file(file_name, i, j);
-      }
 
     // -->At this point you should also read in the output from a neural network
 
-    // Distribute g_in:
-    for( unsigned int i = 0; i < size; i++ ) 
-      thm[i].update_g_in(g_in);
+    bool nn_files_exists = false;
+    {
+      std::string file_name_1 = "interface_" + std::to_string(1) + "_" + std::to_string(0) + "_nn.csv";
+      std::string file_name_2 = "interface_" + std::to_string(0) + "_" + std::to_string(1) + "_nn.csv";
+      if (doesFileExist(file_name_1) && doesFileExist(file_name_2))
+        nn_files_exists = true;
+    }
+
+    if(nn && nn_files_exists) {
+        std::cout << "nn" << std::endl;
+
+        for( unsigned int i = 0; i < size; i++ )
+          {
+            std::string file_name = "interface_";
+
+            // --- Vorbereitung ---
+            // Zum wieder einlesen der Datei benoetigst du:
+            //  - Wie viele Zahlen stehen in einer Reihe, das ist besimmt durch: n_face_q_points
+            //  - Wie viele Zeilen hat die Matrix: ich nenne die Variable hier: n_rows (beim schreiben der Datei, nennst du die Variable subfaces)
+            SurfaceCommunicator<dim> g_in_nn(size, file_name, 8 /*n_face_q_points*/, 16 /*n_rows*/);
+            thm[i].update_g_in(g_in_nn);
+          }
+
+        std::cout << "done!" << std::endl;
+
+        // Debugging: 
+        //for( unsigned int i = 0; i < size; i++ )
+        //  for( unsigned int j = 0; j < size; j++ ) {
+        //    std::string file_name2 = "interface_" + std::to_string(i) + "_" + std::to_string(j) + "_" + "control" + ".csv";
+        //    g_in_nn.to_file(file_name2, i, j);
+        //  }
+    } else {
+
+        // Print to file
+        for( unsigned int i = 0; i < size; i++ )
+          for( unsigned int j = 0; j < size; j++ ) {
+            std::string file_name = "interface_" + std::to_string(i) + "_" + std::to_string(j) + "_" + std::to_string(steps) + ".csv";
+            g_in.to_file(file_name, i, j);
+          }
+
+        // Distribute g_in:
+        for( unsigned int i = 0; i < size; i++ )
+          thm[i].update_g_in(g_in);
+    }
 
     // compute with the new g_in the interface right hand side (and compute g_out)
     for( unsigned int i = 0; i < size; i++ ) 
@@ -119,12 +166,25 @@ namespace KirasFM {
     for( unsigned int i = 0; i < size; i++ ) 
       thm[i].solve();
 
-    if ( steps % 4 == 0 ) {
-      unsigned int tmp_step = step / 4;
-      for( unsigned int i = 0; i < size; i++ ) {
-          std::string file_name = "solution_" + std::to_string(i) + "_" + std::to_string(steps) + ".csv";
-          thm[i].solution_to_file(file_name);
-      }
+
+    if(size==2) {
+        for( unsigned int i = 0; i < size; i++ ) {
+            std::string file_name = "solution_" + std::to_string(i) + "_" + std::to_string(steps) + ".csv";
+            thm[i].solution_to_file(file_name);
+        }
+    } else {
+        std::string file_name0 = "solution_" + std::to_string(0) + "_" + std::to_string(steps) + ".csv";
+        thm[0].solution_to_file(file_name0);
+        std::string file_name1 = "solution_" + std::to_string(size-1) + "_" + std::to_string(steps) + ".csv";
+        thm[size-1].solution_to_file(file_name1);
+        for( unsigned int i = 1; i < size-1; i++ ) {
+            std::string file_name_above = "solution_" + std::to_string(i) + "_" + std::to_string(steps) + "_above.csv";
+            thm[i].solution_to_file(file_name_above);
+            std::string file_name_below = "solution_" + std::to_string(i) + "_" + std::to_string(steps) + "_below.csv";
+            thm[i].solution_to_file(file_name_below);
+        }
+    }
+
 
   }
 
@@ -202,7 +262,7 @@ int main(int argc, char *argv[]) {
           for( unsigned int i = 0; i < prm.get_integer("Mesh & geometry parameters", "Number of global iterations"); i++ ) {
             pcout << "==================================================================" << std::endl;
             pcout << "STEP " << i + 1 << ":" << std::endl;
-            problem.step(i);
+            problem.step(i, true);
           }
           pcout << "==================================================================" << std::endl;
           problem.print_result();

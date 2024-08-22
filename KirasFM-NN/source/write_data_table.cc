@@ -77,7 +77,7 @@ namespace KirasFM {
     Assert(
       content_string.size() == 0,
       ExcMessage("You tried to print an empty list")
-    )
+    );
 
     for ( std::string s : intern_string ) {
       content_string += s;

@@ -205,7 +205,7 @@ double ParameterReader::get_refrective_index(const unsigned int i) const {
                "\t2. You requesting a material ID, that does not exists, "
                "which is a sign, that your input geometry and input for the "
                "refrective index do not correspond.")
-  )
+  );
 
   return refrectiv_index_list[i];
 }

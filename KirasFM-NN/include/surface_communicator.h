@@ -4,6 +4,7 @@
 #include <deal.II/base/tensor.h>
 #include <iostream>
 #include <fstream>
+#include <vector>
 
 namespace KirasFM{
   using namespace dealii;
@@ -15,6 +16,8 @@ class SurfaceCommunicator {
     SurfaceCommunicator();
 
     SurfaceCommunicator(unsigned int n_domains_);
+
+    SurfaceCommunicator(unsigned int n_domains_, std::string, unsigned int n_face_q_points, unsigned int n_rows);
 
     SurfaceCommunicator(const SurfaceCommunicator<dim>& copy);
 
