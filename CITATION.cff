@@ -1,0 +1,46 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: KirasFM-NN
+message: >-
+  Domain Decomposition with Neural Network Interface
+  Approximations for time-harmonic Maxwell's equations with
+  different wave numbers
+type: software
+authors:
+  - given-names: Tobias
+    family-names: Knoke
+    email: knoke@ifam.uni-hannover.de
+    affiliation: >-
+      Institute of Applied Mathematics, Leibniz University
+      Hannover
+    orcid: 'https://orcid.org/0000-0003-2987-5110'
+  - given-names: Sebastian
+    family-names: Kinnewig
+    email: kinnewig@ifam.uni-hannover.de
+    affiliation: >-
+      Institute of Applied Mathematics, Leibniz University
+      Hannover
+    orcid: 'https://orcid.org/0000-0002-0923-7413'
+identifiers:
+  - type: doi
+    value: 10.17268/sel.mat.2023.01.01
+    description: >-
+      Domain Decomposition with Neural Network Interface
+      Approximations for time-harmonic Maxwell’s equations
+      with different wave numbers
+repository-code: 'https://github.com/2Beers1218/Maxwell-interface-updater'
+abstract: >-
+  This repository consists of a modified version of the
+  Maxwell Solver KirasFM, which is based on a fixed-point
+  domain decomposition method and a feedforward neural
+  network-enhanced that is used to compute an approximation
+  of the surface operator occurring in the fixed point
+  formulation of the Maxwell equation. 
+keywords:
+  - Maxwell's equations
+  - Domain Decomposition Method
+  - Neural Network
+  - Finite Element Method
+license: LGPL-2.1
