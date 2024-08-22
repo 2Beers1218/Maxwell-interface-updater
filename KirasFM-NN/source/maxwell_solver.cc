@@ -397,7 +397,7 @@ void MaxwellProblem<dim>::assemble_system() {
 
             } // rof: q_point
 
-            cell_matrix(i, j) += omega * robin;
+            cell_matrix(i, j) += omega * std::sqrt(eps_term) * robin;
 
           } // rof: dof_j
 
