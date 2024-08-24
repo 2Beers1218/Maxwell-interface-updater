@@ -54,14 +54,9 @@
 #include <parameter_reader.h>
 #include <post_processing.h>
 #include <surface_communicator.h>
-#include <write_data_table.h>
 
 namespace KirasFM {
   using namespace dealii;
-
-  // Provide some useful constants
-  const double PI = 3.141592653589793;  // \pi
-  const double PI2 = 9.869604401089359; // \pi^2
 
 // === The Maxwell Solver class ===
 /*
