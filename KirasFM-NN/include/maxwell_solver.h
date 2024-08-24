@@ -40,6 +40,9 @@
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/tria_accessor.h>
 #include <deal.II/grid/tria_iterator.h>
+
+#include <deal.II/grid/grid_refinement.h>
+
 #include <deal.II/distributed/shared_tria.h>
 
 // dof handler
@@ -50,10 +53,14 @@
 // FE - Elements:
 #include <deal.II/fe/fe_values.h>
 #include <deal.II/fe/fe_system.h>
-#include <deal.II/fe/fe_nedelec_sz.h> 
+#include <deal.II/fe/fe_nedelec_sz.h>
 
 // Dirichlet boundary condition
 #include <deal.II/numerics/vector_tools_boundary.h>
+#include <deal.II/numerics/vector_tools.h>
+
+// Solution transfer
+#include <deal.II/numerics/solution_transfer.h>
 
 // Solver
 #include <deal.II/lac/trilinos_solver.h>
@@ -75,6 +82,7 @@
 #include <parameter_reader.h>
 #include <post_processing.h>
 #include <surface_communicator.h>
+#include <refinement_communicator.h>
 
 namespace KirasFM {
   using namespace dealii;
@@ -119,19 +127,43 @@ class MaxwellProblem {
     void assemble_interface_rhs();
 
     // return:
-    parallel::shared::Triangulation<dim>& return_triangulation();
+    Triangulation<dim>& return_triangulation();
+    SurfaceCommunicator<dim> return_g_out();
     SurfaceCommunicator<dim> return_g_in();
 
-    // update:
-    void update_g_in(SurfaceCommunicator<dim> g);
+    RefinementCommunicator<dim> return_refine();
 
-  private:
-    // === internal functions ===
     void setup_system();
 
     // assemble system
     void assemble_system();
 
+    // interpolate
+    void interpolate();
+    void interpolate_global();
+    void recall_solution();
+
+    // refinement functions:
+    void prepare_mark_interface_for_refinement();
+    void apply_mark_interface_for_refinement();
+
+    void refine();
+
+    // update:
+    void update_g_out( SurfaceCommunicator<dim> g );
+    void update_g_in( SurfaceCommunicator<dim> g );
+
+    void update_refine( RefinementCommunicator<dim> r );
+
+  private:
+    // === internal functions ===
+    void setup_system( DoFHandler<dim>& dof_handler_local );
+
+
+    // error estimator
+    void error_estimator( Vector<float> &error_indicators ) const;
+
+    // output
     void output_results() const;
 
 
@@ -145,7 +177,7 @@ class MaxwellProblem {
     TimerOutput                    timer;
 
     // content
-    parallel::shared::Triangulation<dim> triangulation;
+    Triangulation<dim>             triangulation;
     DoFHandler<dim>                dof_handler;
     FESystem<dim>                  fe;
 
@@ -153,7 +185,7 @@ class MaxwellProblem {
 
     // linear system
     TrilinosWrappers::SparseMatrix system_matrix;
-    TrilinosWrappers::MPI::Vector  solution, system_rhs, rhs_backup;
+    TrilinosWrappers::MPI::Vector  solution, system_rhs, rhs_backup, solution_backup;
 
     // locally_owned_dofs:
     IndexSet                       locally_owned_dofs;
@@ -165,12 +197,15 @@ class MaxwellProblem {
     const std::complex<double>     imag_i = std::complex<double>(0.0, 1.0); 
 
     // Interface
-    SurfaceCommunicator<dim>       g_in;
+    SurfaceCommunicator<dim>       SurfaceOperator, g_out;
+    RefinementCommunicator<dim>    RefinementOperator; /* Refinement over intefaces */
 
     const unsigned int             domain_id;
     const unsigned int             N_domains;
 
     bool                           first_rhs = true;
+    bool                           solved    = false;
+    bool                           rebuild   = false;
 
 
 };

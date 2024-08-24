@@ -19,8 +19,6 @@
  *       Update: August 2024
  */
 
-
-
 #ifndef POST_PROCESSING_H
 #define POST_PROCESSING_H
 
