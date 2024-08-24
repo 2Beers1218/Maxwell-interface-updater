@@ -145,7 +145,7 @@ void MaxwellProblem<dim>::setup_system() {
   VectorTools::project_boundary_values_curl_conforming_l2(
     dof_handler,   
     0 /* vector component*/ , 
-    DirichletBoundaryValues<dim>(), 
+    DirichletBoundaryValues<dim>(prm), 
     dirichlet /* boundary id*/,  
     constraints
   ); 
@@ -154,7 +154,7 @@ void MaxwellProblem<dim>::setup_system() {
   VectorTools::project_boundary_values_curl_conforming_l2(
     dof_handler,   
     dim /* vector component*/ , 
-    DirichletBoundaryValues<dim>(), 
+    DirichletBoundaryValues<dim>(prm), 
     dirichlet /* boundary id*/,  
     constraints
   ); 
@@ -207,382 +207,329 @@ void MaxwellProblem<dim>::setup_system() {
  * which corresponds to the maxwell equations, with robin boundary conditions 
  * in the weak form
  */
-template <int dim>
-void MaxwellProblem<dim>::assemble_system() {
-  timer.enter_subsection ("Assemble system matrix");
-  pcout << "assemble system matrix...\t";
+  template <int dim>
+  void
+  MaxwellProblem<dim>::assemble_system()
+  {
+    timer.enter_subsection("Assemble system matrix");
+    pcout << "assemble system matrix...\t";
 
-  system_matrix         = 0;
-  system_rhs            = 0;
+    system_matrix = 0;
+    system_rhs    = 0;
 
-  const unsigned int curl_dim = (dim == 2) ? 1 : 3;
+    const unsigned int curl_dim = (dim == 2) ? 1 : 3;
 
-  // choose the quadrature formulas
-  QGauss<dim>     quadrature_formula(fe.degree + 2);
-  QGauss<dim - 1> face_quadrature_formula(fe.degree + 1);
+    // choose the quadrature formulas
+    QGauss<dim>     quadrature_formula(fe.degree + 2);
+    QGauss<dim - 1> face_quadrature_formula(fe.degree + 1);
 
-  // get the number of quadrature points and dofs
-  const unsigned int n_q_points      = quadrature_formula.size(),
-                     n_face_q_points = face_quadrature_formula.size(),
-                     dofs_per_cell   = fe.dofs_per_cell;
+    // get the number of quadrature points and dofs
+    const unsigned int n_q_points      = quadrature_formula.size(),
+                       n_face_q_points = face_quadrature_formula.size(),
+                       dofs_per_cell   = fe.dofs_per_cell;
 
-  // set update flags
-  FEValues<dim> fe_values(
-    fe, quadrature_formula, 
-    update_values 
-    | update_gradients 
-    | update_quadrature_points 
-    | update_JxW_values
-  );
-  FEFaceValues<dim> fe_face_values(
-    fe, face_quadrature_formula, 
-    update_values 
-    | update_quadrature_points 
-    | update_normal_vectors 
-    | update_gradients
-    | update_JxW_values
-  );
+    // set update flags
+    FEValues<dim>     fe_values(fe,
+                            quadrature_formula,
+                            update_values | update_gradients |
+                              update_quadrature_points | update_JxW_values);
+    FEFaceValues<dim> fe_face_values(fe,
+                                     face_quadrature_formula,
+                                     update_values | update_quadrature_points |
+                                       update_normal_vectors |
+                                       update_gradients | update_hessians |
+                                       update_JxW_values);
 
-  // Extractors to real and imaginary parts
-  const FEValuesExtractors::Vector E_re(0);
-  const FEValuesExtractors::Vector E_im(dim);
-  std::vector<FEValuesExtractors::Vector> vec(2);
-  vec[0] = E_re;
-  vec[1] = E_im;
+    // Extractors to real and imaginary parts
+    const FEValuesExtractors::Vector        E_re(0);
+    const FEValuesExtractors::Vector        E_im(dim);
+    std::vector<FEValuesExtractors::Vector> vec(2);
+    vec[0] = E_re;
+    vec[1] = E_im;
 
-  // create the local left hand side and right hand side
-  FullMatrix<double> cell_matrix(dofs_per_cell, dofs_per_cell);
-  Vector<double>     cell_rhs(dofs_per_cell);
-  std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
+    // create the local left hand side and right hand side
+    FullMatrix<double> cell_matrix(dofs_per_cell, dofs_per_cell);
+    Vector<double>     cell_rhs(dofs_per_cell);
+    std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
 
-  // global material constants:
-  const double omega      = prm.get_wavenumber();
+    // material constants:
+    const std::complex<double> alpha(1.0, 0);
 
-  const std::complex<double> alpha(1.0, 0);
-
-  // loop over all cells
-  for (const auto &cell : dof_handler.active_cell_iterators()) {
-    if (cell->is_locally_owned() == false)
-      continue;
-
-    // initialize values:
-    cell_matrix = 0;
-    cell_rhs = 0;
-    fe_values.reinit(cell);
-
-    // cell dependent material constants:
-    // for more details see: base_dir/mathematica/Material_Parameter.pdf
-      // magnetic permability (approximativly = 1)
-      const double mu_term  = 1.0;
-      // electric permability: since mu_term = 1 => n = sqrt(eps_term) <=> eps_term = n^2
-      const double eps_term = std::pow( prm.get_refrective_index( cell->material_id() ), 2 );
-
-    // === Domain ===
-    for ( const unsigned int i : fe_values.dof_indices() ) {
-      const unsigned int block_index_i = fe.system_to_block_index(i).first;
-
-      // we only want to compute this once
-      std::vector<Tensor<1, dim>>      phi_i(n_q_points);
-      std::vector<Tensor<1, curl_dim>> curl_phi_i(n_q_points);
-      for (unsigned int q_point = 0; q_point < n_q_points; q_point++) {
-        phi_i[q_point]        = fe_values[vec[block_index_i]].value(i, q_point);
-        curl_phi_i[q_point]   = fe_values[vec[block_index_i]].curl(i, q_point);
-      }
-   
-      for ( unsigned int j = i; j < dofs_per_cell; j++ ) { // we are using the symmetry of the here
-        const unsigned int block_index_j = fe.system_to_block_index(j).first;
-
-        /*
-         * Assamble the block A, from the system matrix M
-         *
-         *  | A   0 |
-         *  |       |
-         *  | 0   A |
-         *
-         * where A = \int_{cell} curl( \phi_i(x) ) * curl( \mu * phi_j(x) ) dx 
-         *         - \omega^2 \int_{cell} \phi_i(x) * \phi_j(x) dx  
-         */
-        if ( block_index_i != block_index_j ) 
+    // loop over all cells
+    for (const auto &cell : dof_handler.active_cell_iterators())
+      {
+        if (cell->is_locally_owned() == false)
           continue;
 
-        double mass_part = 0;
-        double curl_part = 0;
+        // initialize values:
+        cell_matrix = 0;
+        cell_rhs    = 0;
+        fe_values.reinit(cell);
 
-        for ( unsigned int q_point = 0; q_point < n_q_points; q_point++ ) {
-          Tensor<1, dim> phi_j           = fe_values[vec[block_index_i]].value(j, q_point);
-          Tensor<1, curl_dim> curl_phi_j = fe_values[vec[block_index_i]].curl(j, q_point);
+        // cell dependent material constants:
+        const double               mu_term = 1.0;
+        const std::complex<double> omega =
+          prm.get_wavenumber(cell->material_id());
 
-          curl_part += 
-            curl_phi_i[q_point]
-            * curl_phi_j
-            * fe_values.JxW(q_point);
-          
-          mass_part +=
-            phi_i[q_point]
-            * phi_j
-            * fe_values.JxW(q_point);
+        // === Domain ===
+        for (const unsigned int i : fe_values.dof_indices())
+          {
+            const unsigned int block_index_i =
+              fe.system_to_block_index(i).first;
 
-        } // rof: q_point
-
-        // Use skew-symmetry to fill matrices:
-        cell_matrix(i,j) = ( mu_term * curl_part ) - ( ( omega * omega ) * eps_term * mass_part );
-        cell_matrix(j,i) = ( mu_term * curl_part ) - ( ( omega * omega ) * eps_term * mass_part );
-
-      } // rof: dof_j
-
-    } // rof: dof_i
-
-    // === boundary condition ===
-    for (unsigned int face = 0; face < GeometryInfo<dim>::faces_per_cell; face++) {
-      fe_face_values.reinit(cell, face);
-
-      if ( cell->face(face)->at_boundary() == false ) 
-        continue;
-
-      // --- Robin boundary conditions ---
-      if ( cell->face(face)->boundary_id() == robin ) {
-        /*
-         * Assamble the block B
-         *
-         *  |  0   B |
-         *  |        |
-         *  | -B   0 |
-         *
-         *  where B = \int_{face} \Trace( \psi_i(s) ) * \Trace( \psi_j(s) ) ds
-         */
-
-        // compute the normal
-        std::vector<Tensor<1, dim>> normal( n_face_q_points );
-        for (unsigned int q_point = 0; q_point < n_face_q_points; q_point++)
-          normal[q_point] = fe_face_values.normal_vector(q_point);
-
-        for ( const unsigned int i : fe_face_values.dof_indices() ) {
-          const unsigned int block_index_i = fe.system_to_block_index(i).first;
-
-          if ( fe.has_support_on_face(i, face) == false )
-            continue;
-
-          // we only want to compute this once
-          std::vector<Tensor<1, dim>> phi_i(n_face_q_points);
-          for (unsigned int q_point = 0; q_point < n_face_q_points; q_point++) {
-            phi_i[q_point] = 
-              CrossProduct::trace_tangential( fe_face_values[vec[block_index_i]].value(i, q_point), normal[q_point] );
-          }
-
-          for ( const unsigned int j : fe_face_values.dof_indices() ) {
-            const unsigned int block_index_j = fe.system_to_block_index(j).first;
-
-            if ( fe.has_support_on_face(j, face) == false )
-              continue;
-
-            double robin = 0;
-
-            if ( block_index_i == block_index_j ) 
-              continue;
-
-            for (unsigned int q_point = 0; q_point < n_face_q_points; q_point++) {
-              Tensor<1, dim> phi_j = CrossProduct::trace_tangential(fe_face_values[vec[block_index_j]].value(j, q_point), normal[q_point]);
-
-              if ( block_index_i == 0 ) {
-                robin -= 
-                phi_i[q_point]  
-                  * phi_j 
-                  * fe_face_values.JxW(q_point);
-              } else { // if ( block_index_i == 1 ) 
-                robin += 
-                  phi_i[q_point]  
-                  * phi_j 
-                  * fe_face_values.JxW(q_point);
+            // we only want to compute this once
+            std::vector<Tensor<1, dim>>      phi_i(n_q_points);
+            std::vector<Tensor<1, curl_dim>> curl_phi_i(n_q_points);
+            for (unsigned int q_point = 0; q_point < n_q_points; q_point++)
+              {
+                phi_i[q_point] =
+                  fe_values[vec[block_index_i]].value(i, q_point);
+                curl_phi_i[q_point] =
+                  fe_values[vec[block_index_i]].curl(i, q_point);
               }
 
-            } // rof: q_point
+            for (unsigned int j = i; j < dofs_per_cell; j++)
+              { // we are using the symmetry of the here
+                const unsigned int block_index_j =
+                  fe.system_to_block_index(j).first;
 
-            cell_matrix(i, j) += omega * std::sqrt(eps_term) * robin;
+                /*
+                 * Assamble the block A, from the system matrix M
+                 *
+                 *  | A   0 |
+                 *  |       |
+                 *  | 0   A |
+                 *
+                 * where A = \int_{cell} curl( \phi_i(x) ) * curl( \mu *
+                 * phi_j(x) ) dx
+                 *         - \omega^2 \int_{cell} \phi_i(x) * \phi_j(x) dx
+                 */
 
-          } // rof: dof_j
+                double mass_part = 0;
+                double curl_part = 0;
 
-        } // rof: dof_i
+                for (unsigned int q_point = 0; q_point < n_q_points; q_point++)
+                  {
+                    Tensor<1, dim> phi_j =
+                      fe_values[vec[block_index_i]].value(j, q_point);
+                    Tensor<1, curl_dim> curl_phi_j =
+                      fe_values[vec[block_index_i]].curl(j, q_point);
 
-      } // fi: Robin boundary condition
+                    curl_part +=
+                      curl_phi_i[q_point] * curl_phi_j * fe_values.JxW(q_point);
 
-      // --- interface condition ---
-      if ( cell->face(face)->boundary_id() >= 2) {
+                    mass_part +=
+                      phi_i[q_point] * phi_j * fe_values.JxW(q_point);
 
-        // compute the normal
-        std::vector<Tensor<1, dim>> normal( n_face_q_points );
-        for (unsigned int q_point = 0; q_point < n_face_q_points; q_point++) {
-          normal[q_point] = fe_face_values.normal_vector(q_point);
-        }
+                  } // rof: q_point
 
-        for ( const unsigned int i : fe_face_values.dof_indices() ) {
-          const unsigned int block_index_i = fe.system_to_block_index(i).first;
+                // Use skew-symmetry to fill matrices:
+                std::complex<double> massterm =
+                  (mu_term * curl_part) - ((omega * omega) * mass_part);
 
-          // we only want to compute this once
-          std::vector<Tensor<1, dim>> phi_i( n_face_q_points );
-          for (unsigned int q_point = 0; q_point < n_face_q_points; q_point++) {
-            phi_i[q_point] = 
-              CrossProduct::trace_tangential(
-                fe_face_values[vec[block_index_i]].value(i, q_point), normal[q_point]);
+                if (block_index_i != block_index_j)
+                  {
+                    cell_matrix(i, j) = massterm.imag();
+                    cell_matrix(j, i) = massterm.imag();
+                  }
+                else
+                  {
+                    cell_matrix(i, j) = massterm.real();
+                    cell_matrix(j, i) = massterm.real();
+                  }
 
-           } // rof: q_point
+              } // rof: dof_j
 
-          for ( const unsigned int j : fe_face_values.dof_indices() ) {
-            const unsigned int block_index_j = fe.system_to_block_index(j).first;
+          } // rof: dof_i
 
-            if ( fe.has_support_on_face(i, face) == false 
-                 || fe.has_support_on_face(j, face) == false)
+        // === boundary condition ===
+        for (unsigned int face = 0; face < GeometryInfo<dim>::faces_per_cell;
+             face++)
+          {
+            fe_face_values.reinit(cell, face);
+
+            if (cell->face(face)->at_boundary() == false)
               continue;
 
-            double robin           = 0;
+            // --- Robin boundary conditions ---
+            // We apply the robin boundary to the robin_boundary (boundary_id =
+            // 0) additionally we also apply the robin boundary to the
+            // dirichlet_boundary (boundary_id = 1) to avoid reflections on that
+            // surface
+            if (cell->face(face)->boundary_id() == 0 ||
+                cell->face(face)->boundary_id() == 1)
+              {
+                /*
+                 * Assamble the block B
+                 *
+                 *  |  0   B |
+                 *  |        |
+                 *  | -B   0 |
+                 *
+                 *  where B = \int_{face} \Trace( \psi_i(s) ) * \Trace(
+                 * \psi_j(s) ) ds
+                 */
 
-            for (unsigned int q_point = 0; q_point < n_face_q_points; q_point++) {
-              Tensor<1, dim> phi_j = 
-                CrossProduct::trace_tangential(fe_face_values[vec[block_index_j]].value(j, q_point), normal[q_point]);
+                // compute the normal
+                std::vector<Tensor<1, dim>> normal(n_face_q_points);
+                for (unsigned int q_point = 0; q_point < n_face_q_points;
+                     q_point++)
+                  normal[q_point] = fe_face_values.normal_vector(q_point);
 
-              // IBC ( = Robin):
-              robin += 
-                phi_i[q_point]  
-                * phi_j 
-                * fe_face_values.JxW(q_point);
-              
-            } // rof: q_point
+                for (const unsigned int i : fe_face_values.dof_indices())
+                  {
+                    const unsigned int block_index_i =
+                      fe.system_to_block_index(i).first;
 
-            if (block_index_i == block_index_j) { // real values: (blocks: (0,0) and (1,1) )
-            } else if ( block_index_i == 0 && block_index_j == 1) {
-              cell_matrix(i, j) -= omega * robin;
-            } else if (block_index_i == 1 && block_index_j == 0) { // if ( block_index_i == 1 ) 
-              cell_matrix(i, j) += omega * robin;
-            }
+                    if (fe.has_support_on_face(i, face) == false)
+                      continue;
 
-          } // rof: dof_j
+                    // we only want to compute this once
+                    std::vector<Tensor<1, dim>> phi_i(n_face_q_points);
+                    for (unsigned int q_point = 0; q_point < n_face_q_points;
+                         q_point++)
+                      {
+                        phi_i[q_point] = CrossProduct::trace_tangential(
+                          fe_face_values[vec[block_index_i]].value(i, q_point),
+                          normal[q_point]);
+                      }
 
-        } // rof: dof_i
+                    for (const unsigned int j : fe_face_values.dof_indices())
+                      {
+                        const unsigned int block_index_j =
+                          fe.system_to_block_index(j).first;
 
-      } // fi: interface_condition
+                        if (fe.has_support_on_face(j, face) == false)
+                          continue;
 
-    } // rof: faces
-  
-    cell->get_dof_indices(local_dof_indices);
-    constraints.distribute_local_to_global(
-      cell_matrix, 
-      cell_rhs, 
-      local_dof_indices, 
-      system_matrix, 
-      system_rhs
-    );
-
-  } // rof: active cell
-
-  // synchronization between all processors
-  system_matrix.compress(VectorOperation::add);
-  system_rhs.compress(VectorOperation::add);
-
-  // save the initial rhs;
-  rhs_backup = system_rhs;
-  //rhs_backup.compress(VectorOperation::add);
-
-  pcout << " done!" << std::endl;
-  timer.leave_subsection();
-}
+                        double robin = 0;
 
 
-/* 
- * assemble_rhs sets the right hand side of the equation
- *      curl ( curl ( E ) ) - w^2 E = f(x)
- * where f(x) is defined via the function "CurlRHS" 
- * above.
- */
-template <int dim>
-void MaxwellProblem<dim>::assemble_system_rhs() {
-  timer.enter_subsection ("Assemble system right hand side");
-  pcout << "assemble right hand side...";
+                        for (unsigned int q_point = 0;
+                             q_point < n_face_q_points;
+                             q_point++)
+                          {
+                            Tensor<1, dim> phi_j =
+                              CrossProduct::trace_tangential(
+                                fe_face_values[vec[block_index_j]].value(
+                                  j, q_point),
+                                normal[q_point]);
 
-  // choose the quadrature formulas
-  QGauss<dim>     quadrature_formula(fe.degree + 2);
-  QGauss<dim - 1> face_quadrature_formula(fe.degree + 1);
+                            if (block_index_i == 0)
+                              {
+                                robin -= phi_i[q_point] * phi_j *
+                                         fe_face_values.JxW(q_point);
+                              }
+                            else
+                              { // if ( block_index_i == 1 )
+                                robin += phi_i[q_point] * phi_j *
+                                         fe_face_values.JxW(q_point);
+                              }
 
-  // get the number of quadrature points and dofs
-  const unsigned int n_q_points         = quadrature_formula.size();
-  const unsigned int dofs_per_cell      = fe.dofs_per_cell;
+                          } // rof: q_point
 
-  // set update flags
-  FEValues<dim> fe_values(
-    fe, quadrature_formula, 
-    update_values 
-    | update_gradients 
-    | update_quadrature_points 
-    | update_JxW_values
-  );
+                        // Works for Complex and real, if the refractive index
+                        // has a complex part, we also write something into the
+                        // diagonal blocks
+                        if (block_index_i == block_index_j)
+                          cell_matrix(i, j) += omega.imag() * robin;
+                        else if (block_index_i != block_index_j)
+                          cell_matrix(i, j) += omega.real() * robin;
 
-  // Extractors to real and imaginary parts
-  const FEValuesExtractors::Vector E_re(0);
-  const FEValuesExtractors::Vector E_im(dim);
-  std::vector<FEValuesExtractors::Vector> vec(2);
-  vec[0] = E_re;
-  vec[1] = E_im;
+                      } // rof: dof_j
 
-  std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
+                  } // rof: dof_i
 
-  // exact solution
-  CurlRHS<dim> curl_rhs;
+              } // fi: Robin boundary condition
 
-  Vector<double> tmp(2 * dim);
-  std::vector<Vector<double>> curl_rhs_values(n_q_points);
-  for( unsigned int i = 0; i < n_q_points; i++) {
-    curl_rhs_values[i] = tmp;
+            // --- interface condition ---
+            if (cell->face(face)->boundary_id() >= 2)
+              {
+                // compute the normal
+                std::vector<Tensor<1, dim>> normal(n_face_q_points);
+                for (unsigned int q_point = 0; q_point < n_face_q_points;
+                     q_point++)
+                  {
+                    normal[q_point] = fe_face_values.normal_vector(q_point);
+                  }
+
+                for (const unsigned int i : fe_face_values.dof_indices())
+                  {
+                    const unsigned int block_index_i =
+                      fe.system_to_block_index(i).first;
+
+                    // we only want to compute this once
+                    std::vector<Tensor<1, dim>> phi_i(n_face_q_points);
+                    for (unsigned int q_point = 0; q_point < n_face_q_points;
+                         q_point++)
+                      {
+                        phi_i[q_point] = CrossProduct::trace_tangential(
+                          fe_face_values[vec[block_index_i]].value(i, q_point),
+                          normal[q_point]);
+                      } // rof: q_point
+
+                    for (const unsigned int j : fe_face_values.dof_indices())
+                      {
+                        const unsigned int block_index_j =
+                          fe.system_to_block_index(j).first;
+
+                        if (fe.has_support_on_face(i, face) == false ||
+                            fe.has_support_on_face(j, face) == false)
+                          continue;
+
+                        double robin = 0;
+                        for (unsigned int q_point = 0;
+                             q_point < n_face_q_points;
+                             q_point++)
+                          {
+                            Tensor<1, dim> phi_j =
+                              CrossProduct::trace_tangential(
+                                fe_face_values[vec[block_index_j]].value(
+                                  j, q_point),
+                                normal[q_point]);
+
+                            // IBC ( = Robin):
+                            robin += phi_i[q_point] * phi_j *
+                                     fe_face_values.JxW(q_point);
+                          } // rof: q_point
+
+                        if (block_index_i == block_index_j)
+                          { // real values: (blocks: (0,0) and (1,1) )
+                            cell_matrix(i, j) += omega.imag() * robin;
+                          }
+                        else if (block_index_i == 0 && block_index_j == 1)
+                          {
+                            cell_matrix(i, j) -= omega.real() * robin;
+                          }
+                        else if (block_index_i == 1 && block_index_j == 0)
+                          { // if ( block_index_i == 1 )
+                            cell_matrix(i, j) += omega.real() * robin;
+                          }
+
+                      } // rof: dof_j
+
+                  } // rof: dof_i
+
+              } // fi: interface_condition
+
+          } // rof: faces
+
+        cell->get_dof_indices(local_dof_indices);
+        constraints.distribute_local_to_global(
+          cell_matrix, cell_rhs, local_dof_indices, system_matrix, system_rhs);
+
+      } // rof: active cell
+
+    // synchronization between all processors
+    system_matrix.compress(VectorOperation::add);
+    system_rhs.compress(VectorOperation::add);
+
+    rhs_backup = system_rhs;
+
+    pcout << " done!" << std::endl;
+    timer.leave_subsection();
   }
 
-  Tensor<1, dim> curl_rhs_tensor;
-
-  const std::complex<double> imag_i(0.0, 1.0);
-
-  Vector<double> cell_rhs(dofs_per_cell);
-
-  for ( const auto &cell : dof_handler.active_cell_iterators() ) {
-
-    if (cell->is_locally_owned() == false) 
-      continue;
-
-    fe_values.reinit(cell);
-    cell->get_dof_indices(local_dof_indices);
-
-    // local right hand side
-    Vector<double> cell_rhs(dofs_per_cell);
-
-    for ( const unsigned int i : fe_values.dof_indices() ) {
-      const unsigned int block_index_i = fe.system_to_block_index(i).first;
-      const unsigned int pos = block_index_i * dim;
-
-      curl_rhs.vector_value_list( 
-        fe_values.get_quadrature_points(), 
-        curl_rhs_values
-      );
-
-      for (unsigned int q_point = 0; q_point < n_q_points; q_point++){
-
-        curl_rhs_tensor[0] = curl_rhs_values[q_point][0 + pos];
-        curl_rhs_tensor[1] = curl_rhs_values[q_point][1 + pos];
-        if(dim == 3)
-          curl_rhs_tensor[2] = curl_rhs_values[q_point][2 + pos];
-
-        cell_rhs[i] += fe_values[vec[block_index_i]].value(i, q_point)
-                       * curl_rhs_tensor * fe_values.JxW(q_point);
-
-      } // rof: q_point
-
-    } // rof: dof_i
-
-    for ( const unsigned int i : fe_values.dof_indices() ) {
-      system_rhs(local_dof_indices[i]) += cell_rhs[i];
-    } // rof: dof_i
-
-  } // rof: cell
-
-  system_rhs.compress(VectorOperation::add);
-
-  pcout << " done!" << std::endl;
-  timer.leave_subsection();
-}
 
 
 template<int dim>

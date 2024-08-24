@@ -9,14 +9,37 @@ subsection Mesh & geometry parameters
   set Polynomial degree     = 2
 
   # Number of global mesh refinement steps applied to initial coarse grid
-  set Number of refinements = 3 #4
+  set Number of refinements = 3
 
   # Number of global iterations of the outer jacobi fixpoint iterations
-  set Number of global iterations = 1
+  set Number of global iterations = 5
 
   # Scaling factor of the grid
   set Size of grid          = 16
 end
+
+
+# === Incident field ===
+subsection Incident field
+  # Width of the incident Gauss beam (used in the real part)
+  set beam width real       = 200
+
+  # Width of the incident Gauss beam (used in the imaginary part)
+  set beam width imag       = 100
+
+  # Center of the Gauss beam (used in the real part)
+  set beam center real      = 0.5
+
+  # Center of the Gauss beam (used in the imaginary part)
+  set beam center imag      = 0.5
+
+  # Intensity (of the real part)
+  set beam intensity real   = 0.0
+
+  # Intensity (of the imaginary part)
+  set beam intensity imag   = 0.0
+end
+
 
 # === MPI parameter ===
 subsection MPI parameters
@@ -31,7 +54,7 @@ end
 # === material constants ===
 subsection Material parameters
   # A list of the different refrectiv indicies, where the first index corresponds to the material id 0, the second refrectiv index to the material id 1 an so on
-  set List of refrective indicies = 1.49 1.49129
+  set List of refrective indicies = 1.49 0.0 1.49129 0.0
 end
 
 # === physical constants ===

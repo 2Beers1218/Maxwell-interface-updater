@@ -110,8 +110,6 @@ class MaxwellProblem {
 
     // assemble system
     void assemble_system();
-    void assemble_system_rhs();
-
 
     void output_results() const;
 
