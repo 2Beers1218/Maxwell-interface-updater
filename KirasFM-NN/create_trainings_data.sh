@@ -22,7 +22,7 @@ do
       sed -i "s/set beam intensity real   = 1.0/set beam intensity real   = ${ri}/g" options.prm
 
       # Create the trainings data
-      ./build/KirasFM
+      mpirun -np 2 ./build/KirasFM
   
       # Store the interface
       if ! grep -q "nan" "interface_1_0_4.csv" && ! grep -q "nan" "interface_0_1_4.csv"; then
@@ -67,10 +67,10 @@ do
             sed -i "s/set beam intensity real   = 1.0/set beam intensity real   = ${ri}/g" options.prm
             sed -i "s/set beam width imag       = 100/set beam width imag       = ${iw}/g" options.prm
             sed -i "s/set beam center imag      = 0.5/set beam center imag      = ${ic}/g" options.prm 
-            sed -i "s/set beam intensity imag   = 1.0/set beam intensity imag   = ${ii}/g" options.prm
+            sed -i "s/set beam intensity imag   = 0.0/set beam intensity imag   = ${ii}/g" options.prm
 
             # Create the trainings data
-            ./build/KirasFM
+            mpirun -np 2 ./build/KirasFM
   
             if ! grep -q "nan" "interface_1_0_4.csv" && ! grep -q "nan" "interface_0_1_4.csv"; then
               cat interface_0_1_1.csv >> ../training_data/interface_0_1_1_training.csv
