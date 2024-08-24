@@ -49,6 +49,12 @@ namespace DDM_Grid_Generator
     void
     make_simpleblock(Triangulation<dim> &in);
 
+    void
+    make_waveguide(Triangulation<dim> &triangulation,
+                   unsigned            domain,
+                   unsigned            n_domains,
+                   unsigned int        refinements);
+
   private:
     // internal functions
     void

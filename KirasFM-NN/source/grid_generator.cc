@@ -234,7 +234,142 @@ namespace DDM_Grid_Generator
     mark_block<dim>(in, box_lower_left, box_upper_right, 1);
   }
 
+  template <int dim>
+  void
+  DDMGridGenerator<dim>::make_waveguide(Triangulation<dim> &triangulation,
+                                        unsigned            domain,
+                                        unsigned            n_domains,
+                                        unsigned int        refinements)
+  {
+    double start;
+    double end;
+
+    unsigned int              actual_refinements;
+    std::vector<unsigned int> repetitions;
+    if (n_domains == 2)
+      {
+        start = 1.0 * ((1.0 * domain));
+        end   = 1.0 * ((1.0 * domain) + 1.0);
+
+        repetitions        = (dim == 2) ? std::vector<unsigned int>{1, 1} :
+                                          std::vector<unsigned int>{1, 1, 1};
+        actual_refinements = refinements;
+      }
+    else if (n_domains == 4)
+      {
+        start = 0.5 * ((1.0 * domain));
+        end   = 0.5 * ((1.0 * domain) + 1.0);
+
+        repetitions        = (dim == 2) ? std::vector<unsigned int>{2, 1} :
+                                          std::vector<unsigned int>{2, 1, 2};
+        actual_refinements = refinements - 1;
+      }
+    else if (n_domains == 8)
+      {
+        start = 0.25 * ((1.0 * domain));
+        end   = 0.25 * ((1.0 * domain) + 1.0);
+
+        repetitions        = (dim == 2) ? std::vector<unsigned int>{4, 1} :
+                                          std::vector<unsigned int>{4, 1, 4};
+        actual_refinements = refinements - 2;
+      }
+    else if (n_domains == 16)
+      {
+        start = 0.125 * ((1.0 * domain));
+        end   = 0.125 * ((1.0 * domain) + 1.0);
+
+        repetitions        = (dim == 2) ? std::vector<unsigned int>{4, 1} :
+                                          std::vector<unsigned int>{4, 1, 4};
+        actual_refinements = refinements - 3;
+      }
+    else
+      {
+        Assert(false, ExcInternalError());
+      }
+
+
+    const Point<dim> left_edge =
+      (dim == 2) ? Point<dim>(0.0, start) : Point<dim>(0.0, start, 0.0);
+
+    const Point<dim> right_edge =
+      (dim == 2) ? Point<dim>(1.0, end) : Point<dim>(1.0, end, 1.0);
+
+    std::cout << "On domain " << domain << ": " << left_edge << ", "
+              << right_edge << std::endl;
+
+    // create the rectangle
+    GridGenerator::subdivided_hyper_rectangle(
+      triangulation, repetitions, left_edge, right_edge, true);
+
+    // refine the grid
+    triangulation.refine_global(actual_refinements);
+
+
+    for (auto &cell : triangulation.active_cell_iterators())
+      {
+        cell->set_material_id(0);
+
+        for (unsigned int face = 0; face < GeometryInfo<dim>::faces_per_cell;
+             ++face)
+          if (cell->face(face)->at_boundary())
+            cell->face(face)->set_boundary_id(0);
+      }
+
+    for (auto &cell : triangulation.active_cell_iterators())
+      {
+        Point<3>                  center(0.5, 0.5, 0.5);
+        double                    distance_from_center = 0.0;
+        std::vector<unsigned int> axis                 = {0, 2};
+        for (unsigned int i = 0; i < dim - 1; ++i)
+          distance_from_center +=
+            std::pow(cell->center()[axis[i]] - center[axis[i]], 2.0);
+        distance_from_center = std::sqrt(distance_from_center);
+
+        double radius = 0.4;
+        if (distance_from_center < radius)
+          cell->set_material_id(1);
+
+        for (unsigned int face = 0; face < GeometryInfo<dim>::faces_per_cell;
+             ++face)
+          {
+            if (!cell->face(face)->at_boundary())
+              continue;
+
+            if (domain == 0)
+              {
+                if (cell->face(face)->center()[1] < start + 1e-8)
+                  cell->face(face)->set_boundary_id(1);
+                else if (cell->face(face)->center()[1] > end - 1e-8)
+                  cell->face(face)->set_boundary_id(domain + 2 + 1);
+                else
+                  cell->face(face)->set_boundary_id(0);
+              }
+            else if (domain == (n_domains - 1))
+              {
+                if (cell->face(face)->center()[1] < start + 1e-8)
+                  cell->face(face)->set_boundary_id(domain + 2 - 1);
+                else if (cell->face(face)->center()[1] > end - 1e-8)
+                  cell->face(face)->set_boundary_id(0);
+                else
+                  cell->face(face)->set_boundary_id(0);
+              }
+            else
+              {
+                if (cell->face(face)->center()[1] < start + 1e-8)
+                  cell->face(face)->set_boundary_id(domain + 2 - 1);
+                else if (cell->face(face)->center()[1] > end - 1e-8)
+                  cell->face(face)->set_boundary_id(domain + 2 + 1);
+                else
+                  cell->face(face)->set_boundary_id(0);
+              }
+          }
+      }
+
+    // std::string name = "Grid-" + std::to_string(domain) + ".vtk";
+    // std::ofstream output_file(name);
+    // GridOut().write_vtk(triangulation, output_file);
+  }
+
   template class DDMGridGenerator<2>;
-  // template class DDMGridGenerator<3>;
 
 } // namespace DDM_Grid_Generator
