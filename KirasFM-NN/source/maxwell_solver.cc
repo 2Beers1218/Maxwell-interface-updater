@@ -1,21 +1,22 @@
 /* ---------------------------------------------------------------------
  *
- * Copyright (C) 1999 - 2018 by the deal.II authors
+ * Copyright (C) 2024 Sebastian Kinnewig
  *
- * This file is part of the deal.II library.
- *
- * The deal.II library is free software; you can use it, redistribute
- * it, and/or modify it under the terms of the GNU Lesser General
- * Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * The full text of the license can be found in the file LICENSE at
- * the top level of the deal.II distribution.
+ * The code is licensed under the GNU Lesser General Public License as
+ * published by the Free Software Foundation in version 2.1
+ * The full text of the license can be found in the file LICENSE.md
  *
  * ---------------------------------------------------------------------
+ * Contact:
+ *   Sebastian Kinnewig
+ *   Leibniz Universität Hannover (LUH)
+ *   Institut für Angewandte Mathematik (IfAM)
  *
- *  Written by Sebastian Kinnewig
- *  November 2021
+ * Questions?
+ *   E-Mail: kinnewig@ifam.uni-hannover.de
  *
+ * Date: November 2021
+ *       Update: August 2024
  */
 
 #include <maxwell_solver.h>

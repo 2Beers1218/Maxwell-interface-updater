@@ -1,3 +1,25 @@
+/* ---------------------------------------------------------------------
+ *
+ * Copyright (C) 2024 Sebastian Kinnewig
+ *
+ * The code is licensed under the GNU Lesser General Public License as
+ * published by the Free Software Foundation in version 2.1
+ * The full text of the license can be found in the file LICENSE.md
+ *
+ * ---------------------------------------------------------------------
+ * Contact:
+ *   Sebastian Kinnewig
+ *   Leibniz Universität Hannover (LUH)
+ *   Institut für Angewandte Mathematik (IfAM)
+ *
+ * Questions?
+ *   E-Mail: kinnewig@ifam.uni-hannover.de
+ *
+ * Date: November 2021
+ *       Update: August 2024
+ */
+
+
 #ifndef MY_GRID_GENERATOR_H
 #define MY_GRID_GENERATOR_H
 
