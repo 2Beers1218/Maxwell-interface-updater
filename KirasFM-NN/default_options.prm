@@ -12,7 +12,7 @@ subsection Mesh & geometry parameters
   set Number of refinements = 4
 
   # Number of global iterations of the outer jacobi fixpoint iterations
-  set Number of global iterations = 3
+  set Number of global iterations = 5
 
   # Scaling factor of the grid
   set Size of grid          = 16
@@ -22,10 +22,10 @@ end
 # === Incident field ===
 subsection Incident field
   # Width of the incident Gauss beam (used in the real part)
-  set beam width real       = 175
+  set beam width real       = 100
 
   # Width of the incident Gauss beam (used in the imaginary part)
-  set beam width imag       = 125
+  set beam width imag       = 100
 
   # Center of the Gauss beam (used in the real part)
   set beam center real      = 0.5

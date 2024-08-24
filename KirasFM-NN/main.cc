@@ -348,13 +348,13 @@ namespace KirasFM
         DDM_Grid_Generator::DDMGridGenerator<dim> ddm_gg(owned_problems[i], size, refinements);
 
         // Simple cube:
-        ddm_gg.make_simpleblock(thm[i].return_triangulation());
+        // ddm_gg.make_simpleblock(thm[i].return_triangulation());
 
-	      //// Simple waveguide:
-        //ddm_gg.make_waveguide(thm[i].return_triangulation(),
-        //                      owned_problems[i],
-        //                      size,
-        //                      refinements);
+	      // Simple waveguide:
+        ddm_gg.make_waveguide(thm[i].return_triangulation(),
+                              owned_problems[i],
+                              size,
+                              refinements);
       }
 
     // initalize the maxwell problems:

@@ -2,9 +2,9 @@
 
 # Define the list
 #
-real_width=(333)
-real_center=(0.45)
-real_intensity=(1.0)
+real_width=(75 125 175)
+real_center=(0.4 0.6)
+real_intensity=(0.77 1.33)
 
 # Trainings set with only real imput
 for rw in "${real_width[@]}"
@@ -22,7 +22,7 @@ do
       sed -i "s/set beam intensity real   = 1.0/set beam intensity real   = ${ri}/g" options.prm
 
       # Create the trainings data
-      ./build/KirasFM
+      mpirun -np 2 ./build/KirasFM
   
       # Store the interface
       if ! grep -q "nan" "interface_1_0_4.csv" && ! grep -q "nan" "interface_0_1_4.csv"; then
@@ -39,8 +39,8 @@ do
   done
 done
 
-real_width=(333)
-imag_width=(333)
+real_width=(75 125)
+imag_width=(75 125)
 real_center=(0.5)
 imag_center=(0.5)
 real_intensity=(0.66)
@@ -70,7 +70,7 @@ do
             sed -i "s/set beam intensity imag   = 1.0/set beam intensity imag   = ${ii}/g" options.prm
 
             # Create the trainings data
-            ./build/KirasFM
+            mpirun -np 2 ./build/KirasFM
   
             if ! grep -q "nan" "interface_1_0_4.csv" && ! grep -q "nan" "interface_0_1_4.csv"; then
               cat interface_0_1_1.csv >> ../training_data/interface_0_1_1_test.csv
