@@ -28,17 +28,17 @@ namespace KirasFM
   DirichletBoundaryValues<2>::vector_value(const Point<2> &p,
                                            Vector<double> &values) const
   {
-    //values(0) = intensity_real *
-    //            std::exp(-(std::pow(p(0) - center_real, 2) * width_real));
-    //values(1) = 0.0;
-    //values(2) = intensity_imag *
-    //            std::exp(-(std::pow(p(0) - center_imag, 2) * width_imag));
-    //values(3) = 0.0;
+    // values(0) = intensity_real *
+    //             std::exp(-(std::pow(p(0) - center_real, 2) * width_real));
+    // values(1) = 0.0;
+    // values(2) = intensity_imag *
+    //             std::exp(-(std::pow(p(0) - center_imag, 2) * width_imag));
+    // values(3) = 0.0;
 
     // Boundary conditions for the control set:
-    values(0) = intensity_real * ( sin(numbers::PI * p(0) * width_real) );
+    values(0) = intensity_real * (sin(numbers::PI * p(0) * width_real));
     values(1) = 0.0;
-    values(2) = intensity_imag * ( sin(numbers::PI * p(0) * width_real) );
+    values(2) = intensity_imag * (sin(numbers::PI * p(0) * width_real));
     values(3) = 0.0;
   }
 
