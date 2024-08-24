@@ -42,17 +42,6 @@ class SurfaceCommunicator {
     
 
   private:
-    friend class boost::serialization::access;
-
-    template<class Archive>
-    void serialize(Archive &ar, const unsigned int version) {
-        ar& n_domains;
-        ar& n_faces;
-        ar& value_data;
-        v = version;
-    }
-
-
     unsigned int n_domains;
     unsigned int n_faces;
     unsigned int v;
