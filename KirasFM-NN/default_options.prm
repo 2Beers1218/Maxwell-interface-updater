@@ -1,0 +1,73 @@
+# Listing of Parameters
+# ---------------------
+
+subsection Mesh & geometry parameters
+  # The dimension of the Nedelec elements
+  set Dimension             = 2
+
+  # Polynomial degree of the used Nedelec elements
+  set Polynomial degree     = 2
+
+  # Number of global mesh refinement steps applied to initial coarse grid
+  set Number of refinements = 3
+
+  # Number of global iterations of the outer jacobi fixpoint iterations
+  set Number of global iterations = 5
+
+  # Scaling factor of the grid
+  set Size of grid          = 16
+end
+
+
+# === Incident field ===
+subsection Incident field
+  # Width of the incident Gauss beam (used in the real part)
+  set beam width real       = 100
+
+  # Width of the incident Gauss beam (used in the imaginary part)
+  set beam width imag       = 100
+
+  # Center of the Gauss beam (used in the real part)
+  set beam center real      = 0.5
+
+  # Center of the Gauss beam (used in the imaginary part)
+  set beam center imag      = 0.5
+
+  # Intensity (of the real part)
+  set beam intensity real   = 1.0
+
+  # Intensity (of the imaginary part)
+  set beam intensity imag   = 0.0
+end
+
+
+# === MPI parameter ===
+subsection MPI parameters
+  # Number of threads assigned to each domain
+  set CPUs per domain       = 1
+
+  # Number of slizes (length) that will be created
+  set slizes                = 2
+end
+
+
+# === material constants ===
+subsection Material parameters
+  # A list of the different refrectiv indicies, where the first index corresponds to the material id 0, the second refrectiv index to the material id 1 an so on
+  set List of refrective indicies = 1.49 0.0 1.49129 0.0
+end
+
+# === physical constants ===
+subsection Physical constants
+  # Frequency
+  set lambda = 3.0 #0.66
+end
+
+
+subsection Output parameters
+  # Name of the output file (without extension)
+  set Output file   = solution
+
+  # A name for the output format to be used
+  set Output format = vtu
+end
