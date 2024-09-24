@@ -1,6 +1,6 @@
 # KirasFM-NN: KirasFM + Feedforawrd Neural Network
 
-This repository consists of a modified version of the Maxwell Solver KirasFM, which is based on a fixed-point domain decomposition method and a feedforward neural network-enhanced that is used to compute an approximation of the surface operator occurring in the fixed point formulation of the Maxwell equation.
+This repository consists of a modified version of the Maxwell Solver [KirasFM](https://github.com/kinnewig/KirasFM), framework built on top of [deal.II](https://github.com/dealii/dealii) that provides all necessary tools for solving time-harmonic Maxwell's equations with an optimized Schwarz method and a feedforward neural network-enhanced that is used to compute an approximation of the surface operator that is used in the optimized Schwarz method.
 
 ## Citation
 Please use the *Cite this repository* button in the *About* section of this repository.
@@ -14,7 +14,7 @@ This is a CMake script that installs dea.lII along with its dependencies. And it
 tl;dr:
 1. Step: Download dcs2:
 ```
-git clone git@github.com:kinnewig/dcs2.git
+git clone https://github.com/kinnewig/dcs2.git
 cd dcs2
 ```
 2. Step: Run the install script:
