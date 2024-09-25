@@ -5,6 +5,8 @@ This repository consists of a modified version of the Maxwell Solver [KirasFM](h
 ## Citation
 Please use the *Cite this repository* button in the *About* section of this repository.
 
+[![DOI](https://zenodo.org/badge/506736534.svg)](https://zenodo.org/doi/10.5281/zenodo.13837201)
+
 ## Installation - Dependencies
 The dependencies required are deal.II, PyTorch, and Jupyter Lab. In the following, it is assumed that a recent C++ compiler (e.g., GCC) and a recent Python version are installed.
 

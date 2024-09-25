@@ -30,6 +30,9 @@ identifiers:
       Domain Decomposition with Neural Network Interface
       Approximations for time-harmonic Maxwell’s equations
       with different wave numbers
+  - type: doi
+    value: 10.5281/zenodo.13837201
+    description: KirasFM-NN release version 1.0.0
 repository-code: 'https://github.com/2Beers1218/Maxwell-interface-updater'
 abstract: >-
   This repository consists of a modified version of the
@@ -44,3 +47,6 @@ keywords:
   - Neural Network
   - Finite Element Method
 license: LGPL-2.1
+commit: d8b9426cf97a2b74116b670191371a32fa3365f4
+version: 1.0.0
+date-released: '2024-09-25'
